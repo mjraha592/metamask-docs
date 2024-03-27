@@ -1,36 +1,47 @@
 ---
-description: MetaMask Ethereum provider API reference
+description: See the MetaMask Ethereum provider API reference.
 sidebar_position: 3
 ---
 
 # Ethereum provider API
 
-MetaMask injects the [provider API](../concepts/apis.md#ethereum-provider-api) into websites visited
-by its users using the `window.ethereum` provider object.
-You can use the provider [properties](#properties), [methods](#methods), and [events](#events) in
-your dapp.
+This page is a reference for the Ethereum provider API of MetaMask's [Wallet API](../concepts/wallet-api.md).
+MetaMask injects the provider API into websites visited by its users using the `window.ethereum` provider object.
+You can use the provider [properties](#properties), [methods](#methods), and [events](#events) in your dapp.
+
+:::info Note
+MetaMask supports [EIP-6963](https://eips.ethereum.org/EIPS/eip-6963), which introduces an
+alternative wallet detection mechanism to the `window.ethereum` injected provider.
+This alternative mechanism enables dapps to support [wallet interoperability](../concepts/wallet-interoperability.md)
+by discovering multiple injected wallet providers in a user's browser.
+We recommend [using this mechanism to connect to MetaMask](../how-to/connect/index.md).
+
+You can access the provider API using the selected EIP-6963 provider object.
+Throughout this documentation, we refer to the selected provider using `provider`.
+:::
 
 ## Properties
 
-### window.ethereum.isMetaMask
+### `isMetaMask`
 
-This property is `true` if the user has MetaMask installed.
+This property is `true` if the user has MetaMask installed, and `false` otherwise.
 
 :::note
 This property is non-standard.
 Non-MetaMask providers may also set this property to `true`.
 :::
 
-## Methods
-
-### window.ethereum.isConnected()
+#### Example
 
 ```typescript
-window.ethereum.isConnected(): boolean;
+provider.isMetaMask; // Or window.ethereum.isMetaMask if you don't support EIP-6963.
 ```
 
-Returns `true` if the provider is connected to the current chain.
+## Methods
 
+### `isConnected()`
+
+Indicates whether the provider is connected to the current chain.
 If the provider isn't connected, the page must be reloaded to re-establish the connection.
 See the [`connect`](#connect) and [`disconnect`](#disconnect) events for more information.
 
@@ -40,69 +51,95 @@ In the provider interface, "connected" and "disconnected" refer to whether the p
 requests to the current chain.
 :::
 
-### window.ethereum.request(args)
+#### Parameters
+
+None.
+
+#### Returns
+
+`true` if the provider is connected to the current chain, `false` otherwise.
+
+#### Example
 
 ```typescript
-interface RequestArguments {
-  method: string;
-  params?: unknown[] | object;
-}
-
-window.ethereum.request(args: RequestArguments): Promise<unknown>;
+provider.isConnected(); // Or window.ethereum.isConnected() if you don't support EIP-6963.
 ```
 
-Use this method to submit [RPC API](rpc-api.md) requests to Ethereum using MetaMask.
-It returns a promise that resolves to the result of the RPC method call.
+### `request()`
 
-The parameters and return value vary by RPC method.
-In practice, if a method has parameters, they're almost always of type `Array<any>`.
+This method is used to submit [JSON-RPC API requests](/wallet/reference/json-rpc-api) to Ethereum using MetaMask.
 
+#### Parameters
+
+An object containing:
+
+- `method`: `string` - The JSON-RPC API method name.
+- `params`: `array` or `object` - (Optional) Parameters of the RPC method.
+  In practice, if a method has parameters, they're almost always of type `array`.
+
+#### Returns
+
+A promise that resolves to the result of the RPC method call.
 If the request fails, the promise rejects with an [error](#errors).
 
-The following is an example of using `window.ethereum.request(args)` to call
+#### Example
+
+The following is an example of using `request()` to call
 [`eth_sendTransaction`](/wallet/reference/eth_sendTransaction):
 
 ```javascript
 params: [
-  {
-    from: '0xb60e8dd61c5d32be8058bb8eb970870f07233155',
-    to: '0xd46e8dd67c5d32be8058bb8eb970870f07244567',
-    gas: '0x76c0', // 30400
-    gasPrice: '0x9184e72a000', // 10000000000000
-    value: '0x9184e72a', // 2441406250
-    data:
-      '0xd46e8dd67c5d32be8d46e8dd67c5d32be8058bb8eb970870f072445675058bb8eb970870f072445675',
-  },
+    {
+        from: "0xb60e8dd61c5d32be8058bb8eb970870f07233155",
+        to: "0xd46e8dd67c5d32be8058bb8eb970870f07244567",
+        // 30400
+        gas: "0x76c0",
+        // 10000000000000
+        gasPrice: "0x9184e72a000",
+        // 2441406250
+        value: "0x9184e72a",
+        data: "0xd46e8dd67c5d32be8d46e8dd67c5d32be8058bb8eb970870f072445675058bb8eb970870f072445675",
+    },
 ];
 
-window.ethereum
-  .request({
-    method: 'eth_sendTransaction',
-    params,
-  })
-  .then((result) => {
-    // The result varies by RPC method.
-    // For example, this method returns a transaction hash hexadecimal string upon success.
-  })
-  .catch((error) => {
-    // If the request fails, the Promise rejects with an error.
-  });
+provider // Or window.ethereum if you don't support EIP-6963.
+    .request({
+        method: "eth_sendTransaction",
+        params,
+    })
+    .then((result) => {
+        // The result varies by RPC method.
+        // For example, this method returns a transaction hash hexadecimal string upon success.
+    })
+    .catch((error) => {
+        // If the request fails, the Promise rejects with an error.
+    });
 ```
 
-### window.ethereum._metamask.isUnlocked()
+### `_metamask.isUnlocked()`
 
 :::caution
 This method is experimental.
 Use it at your own risk.
 :::
 
-```typescript
-window.ethereum._metamask.isUnlocked(): Promise<boolean>;
-```
-
-Returns a promise that resolves to a `boolean` indicating if MetaMask is unlocked by the user.
+Indicates if MetaMask is unlocked by the user.
 MetaMask must be unlocked to perform any operation involving user accounts.
 Note that this method doesn't indicate if the user has exposed any accounts to the caller.
+
+#### Parameters
+
+None.
+
+#### Returns
+
+A promise that resolves to `true` if MetaMask is unlocked by the user, and `false` otherwise.
+
+#### Example
+
+```typescript
+provider._metamask.isUnlocked(); // Or window.ethereum._metamask.isUnlocked() if you don't support EIP-6963.
+```
 
 ## Events
 
@@ -114,23 +151,26 @@ unmount in React).
 
 ```javascript
 function handleAccountsChanged(accounts) {
-  // Handle new accounts, or lack thereof.
+    // Handle new accounts, or lack thereof.
 }
 
-window.ethereum.on('accountsChanged', handleAccountsChanged);
+provider // Or window.ethereum if you don't support EIP-6963.
+    .on("accountsChanged", handleAccountsChanged);
 
 // Later
 
-window.ethereum.removeListener('accountsChanged', handleAccountsChanged);
+provider // Or window.ethereum if you don't support EIP-6963.
+    .removeListener("accountsChanged", handleAccountsChanged);
 ```
 
-The first argument of `window.ethereum.removeListener` is the event name, and the second argument is
-a reference to the function passed to `window.ethereum.on` for the event.
+The first argument of `removeListener` is the event name, and the second argument is
+a reference to the function passed to `on` for the event.
 
-### accountsChanged
+### `accountsChanged`
 
 ```typescript
-window.ethereum.on('accountsChanged', handler: (accounts: Array<string>) => void);
+provider // Or window.ethereum if you don't support EIP-6963.
+    .on("accountsChanged", handler: (accounts: Array<string>) => void);
 ```
 
 The provider emits this event when the return value of the
@@ -144,44 +184,48 @@ the same permissions.
 This means that the provider emits `accountsChanged` when the user's exposed account address changes.
 Listen to this event to [handle accounts](../how-to/connect/access-accounts.md#handle-accounts).
 
-### chainChanged
+### `chainChanged`
 
 ```typescript
-window.ethereum.on('chainChanged', handler: (chainId: string) => void);
+provider // Or window.ethereum if you don't support EIP-6963.
+    .on("chainChanged", handler: (chainId: string) => void);
 ```
 
 The provider emits this event when the currently connected chain changes.
-Listen to this event to [detect a user's network](../how-to/connect/detect-network.md).
+Listen to this event to [detect a user's network](../how-to/manage-networks/detect-network.md).
 
-:::caution important
+:::caution Important
 
 We strongly recommend reloading the page upon chain changes, unless you have a good reason not to:
 
-```javascript
-window.ethereum.on('chainChanged', (chainId) => window.location.reload());
+```typescript
+provider // Or window.ethereum if you don't support EIP-6963.
+    .on("chainChanged", (chainId) => window.location.reload());
 ```
 
 :::
 
-### connect
+### `connect`
 
 ```typescript
 interface ConnectInfo {
-  chainId: string;
+    chainId: string;
 }
 
-window.ethereum.on('connect', handler: (connectInfo: ConnectInfo) => void);
+provider // Or window.ethereum if you don't support EIP-6963.
+    .on("connect", handler: (connectInfo: ConnectInfo) => void);
 ```
 
 The provider emits this event when it's first able to submit RPC requests to a chain.
 We recommend listening to this event and using the
-[`window.ethereum.isConnected()`](#windowethereumisconnected) provider method to determine when
+[`isConnected()`](#isconnected) provider method to determine when
 the provider is connected.
 
-### disconnect
+### `disconnect`
 
 ```typescript
-ethereum.on('disconnect', handler: (error: ProviderRpcError) => void);
+provider // Or window.ethereum if you don't support EIP-6963.
+    .on("disconnect", handler: (error: ProviderRpcError) => void);
 ```
 
 The provider emits this event if it becomes unable to submit RPC requests to a chain.
@@ -189,18 +233,19 @@ In general, this only happens due to network connectivity issues or some unfores
 
 When the provider emits this event, it doesn't accept new requests until the connection to the chain
 is re-established, which requires reloading the page.
-You can also use the [`window.ethereum.isConnected()`](#windowethereumisconnected) provider method
+You can also use the [`isConnected()`](#isconnected) provider method
 to determine if the provider is disconnected.
 
-### message
+### `message`
 
 ```typescript
 interface ProviderMessage {
-  type: string;
-  data: unknown;
+    type: string;
+    data: unknown;
 }
 
-window.ethereum.on('message', handler: (message: ProviderMessage) => void);
+provider // Or window.ethereum if you don't support EIP-6963.
+    .on("message", handler: (message: ProviderMessage) => void);
 ```
 
 The provider emits this event when it receives a message that the user should be notified of.
@@ -217,14 +262,13 @@ All errors returned by the MetaMask provider follow this interface:
 
 ```typescript
 interface ProviderRpcError extends Error {
-  message: string;
-  code: number;
-  data?: unknown;
+    message: string;
+    code: number;
+    data?: unknown;
 }
 ```
 
-The [`window.ethereum.request(args)`](#windowethereumrequestargs) provider method throws errors
-eagerly.
+The [`request()`](#request) provider method throws errors eagerly.
 You can use the error `code` property to determine why the request failed.
 Common codes and their meaning include:
 

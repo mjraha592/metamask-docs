@@ -3,7 +3,7 @@
 
 const codeTheme = require("prism-react-renderer/themes/dracula");
 const remarkCodesandbox = require("remark-codesandbox");
-const path = require("path");
+const isProd = process.env.NODE_ENV === "production";
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
@@ -63,7 +63,7 @@ const config = {
           openrpc: {
             openrpcDocument: "https://metamask.github.io/api-specs/latest/openrpc.json",
             path: "reference",
-            sidebarLabel: "JSON-RPC API playground",
+            sidebarLabel: "JSON-RPC API",
           },
         },
         theme: {
@@ -103,245 +103,260 @@ const config = {
       }),
     ],
     [
-      "docusaurus-plugin-typedoc",
+      "@docusaurus/plugin-content-docs",
       {
-        entryPoints: ["./external/keyring-api/src/index.ts"],
-        tsconfig: "./external/keyring-api/tsconfig.json",
-        readme: "snaps/reference/keyring-api-index/index.md",
-        out: path.join(__dirname, "snaps/reference/keyring-api"),
-        sidebar: {
-          filteredIds: ["reference/keyring-api/index"],
-        },
-        useCodeBlocks: true,
-        expandObjects: true,
-        parametersFormat: "table",
-        hideGenerator: true,
+        id: "services",
+        path: "services",
+        routeBasePath: "services",
+        editUrl: "https://github.com/MetaMask/metamask-docs/edit/main/",
+        sidebarPath: require.resolve("./services-sidebar.js"),
+        breadcrumbs: false,
+      },
+    ],
+    [
+      "@docusaurus/plugin-content-docs",
+      {
+        id: "docs",
+        path: "docs",
+        routeBasePath: "/",
+        editUrl: "https://github.com/MetaMask/metamask-docs/edit/main/",
+        sidebarPath: false,
+        breadcrumbs: false,
       },
     ],
     [
       "@docusaurus/plugin-client-redirects",
       {
         fromExtensions: ["html", "htm"],
+        // These redirects are (mostly) organized in the same order as the sidebar.
         redirects: [
           {
-            from: "/guide/",
-            to: "/wallet/",
-          },
-          {
-            from: "/guide/getting-started",
-            to: "/wallet/how-to/get-started-building/set-up-dev-environment",
-          },
-          {
-            from: "/guide/common-terms",
-            to: "/wallet/",
-          },
-          {
-            from: "/guide/initializing-dapps",
-            to: "/wallet/how-to/interact-with-smart-contracts",
-          },
-          {
-            from: "/guide/accessing-accounts",
-            to: "/wallet/how-to/connect/access-accounts",
-          },
-          {
-            from: "/guide/sending-transactions",
-            to: "/wallet/how-to/send-transactions",
-          },
-          {
-            from: "/guide/ethereum-provider",
-            to: "/wallet/reference/provider-api",
-          },
-          {
-            from: "/guide/provider-migration",
-            to: "/wallet/concepts/apis",
-          },
-          {
-            from: "/guide/rpc-api",
-            to: "/wallet/reference/rpc-api",
-          },
-          {
-            from: "/guide/signing-data",
-            to: "/wallet/how-to/sign-data",
-          },
-          {
-            from: "/guide/registering-function-names",
-            to: "/wallet/how-to/display/method-names",
-          },
-          {
-            from: "/guide/registering-your-token",
-            to: "/wallet/how-to/display/tokens",
-          },
-          {
-            from: "/guide/defining-your-icon",
-            to: "/wallet/how-to/display/icon",
-          },
-          {
-            from: "/guide/onboarding-library",
-            to: "/wallet/how-to/onboard-users",
-          },
-          {
-            from: "/guide/metamask-extension-provider",
-            to: "/wallet/how-to/access-provider",
-          },
-          {
-            from: "/guide/mobile-getting-started",
-            to: "/wallet/how-to/connect/set-up-sdk",
-          },
-          {
-            from: "/guide/site-compatibility-checklist",
-            to: "/wallet/how-to/connect/set-up-sdk",
-          },
-          {
-            from: "/guide/mobile-best-practices",
-            to: "/wallet/how-to/connect/set-up-sdk",
-          },
-          {
-            from: "/guide/snaps",
-            to: "/snaps/",
-          },
-          {
-            from: "/guide/snaps-development-guide",
-            to: "/snaps/how-to/develop-a-snap",
-          },
-          {
-            from: "/guide/snaps-concepts",
-            to: "/snaps/concepts",
-          },
-          {
-            from: "/guide/snaps-rpc-api",
-            to: "/snaps/reference/rpc-api",
-          },
-          {
-            from: "/guide/snaps-permissions",
-            to: "/snaps/how-to/request-permissions",
-          },
-          {
-            from: "/guide/snaps-exports",
-            to: "/snaps/reference/exports",
-          },
-          {
-            from: "/guide/snaps-patching-dependencies",
-            to: "/snaps/how-to/troubleshoot",
-          },
-          {
-            from: "/guide/create-dapp",
-            to: "/wallet/how-to/get-started-building/set-up-dev-environment",
-          },
-          {
-            from: "/guide/contributors",
-            to: "/wallet/",
-          },
-          {
-            from: "/wallet/tutorials/simple-react-dapp",
-            to: "/wallet/tutorials/react-dapp-local-state",
+            from: ["/guide", "/guide/common-terms", "/guide/contributors", "/wallet/how-to/get-started-building", "/wallet/how-to/set-up-dev-environment", "/guide/create-dapp", "/guide/getting-started", "/wallet/category/get-started", "/wallet/get-started/set-up-dev-environment", "/wallet/how-to/get-started-building/set-up-dev-environment"],
+            to: "/wallet",
           },
           {
             from: "/wallet/category/how-to",
             to: "/wallet/how-to",
           },
           {
-            from: "/wallet/category/concepts",
-            to: "/wallet/concepts",
+            from: ["/wallet/quickstart/javascript", "/wallet/quickstart/react", "/wallet/quickstart/other-platforms", "/wallet/how-to/discover-multiple-wallets", "/wallet/how-to/detect-wallet", "/wallet/how-to/detect-wallet/multiple-wallets", "/guide/metamask-extension-provider", "/wallet/how-to/access-provider"],
+            to: "/wallet/how-to/connect",
           },
           {
-            from: "/wallet/category/tutorials",
-            to: "/wallet/tutorials",
-          },
-          {
-            from: "/wallet/category/reference",
-            to: "/wallet/reference",
-          },
-          {
-            from: "/snaps/category/get-started",
-            to: "/snaps/get-started",
-          },
-          {
-            from: "/snaps/category/how-to",
-            to: "/snaps/how-to",
-          },
-          {
-            from: "/snaps/category/concepts",
-            to: "/snaps/concepts",
-          },
-          {
-            from: "/snaps/category/tutorials",
-            to: "/snaps/tutorials",
-          },
-          {
-            from: "/snaps/category/reference",
-            to: "/snaps/reference",
-          },
-          {
-            from: "/wallet/category/get-started",
-            to: "/wallet/how-to/get-started-building",
-          },
-          {
-            from: "/wallet/get-started/set-up-dev-environment",
-            to: "/wallet/how-to/get-started-building/set-up-dev-environment",
-          },
-          {
-            from: "/wallet/get-started/run-development-network",
-            to: "/wallet/how-to/get-started-building/run-devnet",
-          },
-          {
-            from: "/wallet/how-to/secure-dapp",
-            to: "/wallet/how-to/get-started-building/secure-dapp",
-          },
-          {
-            from: "/wallet/get-started/detect-metamask",
+            from: ["/wallet/get-started/detect-metamask", "/wallet/how-to/detect-metamask", "/wallet/how-to/detect-wallet/metamask"],
             to: "/wallet/how-to/connect/detect-metamask",
           },
           {
-            from: "/wallet/get-started/detect-network",
-            to: "/wallet/how-to/connect/detect-network",
+            from: ["/guide/accessing-accounts", "/wallet/how-to/access-accounts", "/wallet/get-started/access-accounts"],
+            to: "/wallet/how-to/connect/access-accounts",
           },
           {
-            from: "/wallet/get-started/access-accounts",
-            to: "/wallet/how-to/connect/access-accounts",
+            from: ["/wallet/get-started/detect-network", "/wallet/how-to/connect/detect-network", "/wallet/how-to/detect-network"],
+            to: "/wallet/how-to/manage-networks/detect-network",
+          },
+          {
+            from: "/wallet/how-to/add-network",
+            to: "/wallet/how-to/manage-networks/add-network",
+          },
+          {
+            from: "/guide/sending-transactions",
+            to: "/wallet/how-to/send-transactions",
+          },
+          {
+            from: "/guide/signing-data",
+            to: "/wallet/how-to/sign-data",
           },
           {
             from: "/wallet/how-to/use-siwe",
             to: "/wallet/how-to/sign-data/siwe",
           },
           {
-            from: "/wallet/how-to/use-mobile",
-            to: "/wallet/how-to/connect/set-up-sdk",
-          },
-          {
-            from: "/wallet/how-to/use-onboarding-library",
-            to: "/wallet/how-to/onboard-users",
-          },
-          {
-            from: "/wallet/how-to/register-token",
+            from: ["/guide/registering-your-token", "/wallet/how-to/register-token"],
             to: "/wallet/how-to/display/tokens",
           },
           {
-            from: "/wallet/how-to/register-method-names",
+            from: ["/guide/registering-function-names", "/wallet/how-to/register-method-names"],
             to: "/wallet/how-to/display/method-names",
           },
           {
-            from: "/wallet/how-to/set-icon",
+            from: ["/guide/defining-your-icon", "/wallet/how-to/set-icon"],
             to: "/wallet/how-to/display/icon",
           },
           {
-            from: "/wallet/concepts/provider-api",
-            to: "/wallet/concepts/apis",
+            from: "/wallet/how-to/request-permissions",
+            to: "/wallet/how-to/manage-permissions",
           },
           {
-            from: "/wallet/concepts/rpc-api",
-            to: "/wallet/concepts/apis",
+            from: ["/guide/mobile-getting-started", "/guide/site-compatibility-checklist", "/guide/mobile-best-practices", "/wallet/how-to/use-mobile", "/wallet/how-to/integrate-with-mobile", "/sdk"],
+            to: "/wallet/how-to/use-sdk",
           },
           {
-            from: "/wallet/how-to/integrate-with-mobile",
-            to: "/wallet/how-to/connect/set-up-sdk",
+            from: "/wallet/how-to/sign-data/connect-and-sign",
+            to: "/wallet/how-to/use-sdk/javascript/connect-and-sign",
           },
           {
-            from: "/wallet/how-to/migrate-api",
-            to: "/wallet/concepts/apis",
+            from: ["/wallet/how-to/use-3rd-party-integrations/js-infura-api", "/wallet/how-to/make-read-only-requests"],
+            to: "/wallet/how-to/use-sdk/javascript/make-read-only-requests",
           },
           {
-            from: "/sdk",
-            to: "/wallet/how-to/connect/set-up-sdk",
+            from: "/wallet/how-to/batch-json-rpc-requests",
+            to: "/wallet/how-to/use-sdk/javascript/batch-json-rpc-requests",
+          },
+          {
+            from: "/wallet/how-to/display/custom-modals",
+            to: "/wallet/how-to/use-sdk/javascript/display-custom-modals",
+          },
+          {
+            from: "/wallet/how-to/use-3rd-party-integrations/unity-dweb",
+            to: "/wallet/how-to/use-sdk/gaming/unity/dweb",
+          },
+          {
+            from: "/wallet/how-to/use-3rd-party-integrations/unity-infura",
+            to: "/wallet/how-to/use-sdk/gaming/unity/infura",
+          },
+          {
+            from: "/wallet/how-to/use-3rd-party-integrations",
+            to: "/wallet/how-to/use-sdk/3rd-party-libraries",
+          },
+          {
+            from: "/wallet/how-to/use-3rd-party-integrations/web3-onboard",
+            to: "/wallet/how-to/use-sdk/3rd-party-libraries/web3-onboard",
+          },
+          {
+            from: ["/guide/initializing-dapps", "/wallet/how-to/interact-with-smart-contracts"],
+            to: "/wallet/concepts/smart-contracts",
+          },
+          {
+            from: "/guide/ethereum-provider",
+            to: "/wallet/reference/provider-api",
+          },
+          {
+            from: ["/guide/onboarding-library", "/wallet/how-to/use-onboarding-library"],
+            to: "/wallet/how-to/onboard-users",
+          },
+          {
+            from: ["/wallet/get-started/run-development-network", "/wallet/how-to/get-started-building/run-devnet"],
+            to: "/wallet/how-to/run-devnet",
+          },
+          {
+            from: "/wallet/how-to/get-started-building/secure-dapp",
+            to: "/wallet/how-to/secure-dapp",
+          },
+          {
+            from: "/wallet/category/concepts",
+            to: "/wallet/concepts",
+          },
+          {
+            from: ["/guide/provider-migration", "/wallet/concepts/provider-api", "/wallet/concepts/rpc-api", "/wallet/how-to/migrate-api", "/wallet/concepts/apis"],
+            to: "/wallet/concepts/wallet-api",
+          },
+          {
+            from: "/wallet/category/tutorials",
+            to: "/wallet/tutorials",
+          },
+          {
+            from: "/wallet/tutorials/simple-react-dapp",
+            to: "/wallet/tutorials/react-dapp-local-state",
+          },
+          {
+            from: "/wallet/category/reference",
+            to: "/wallet/reference",
+          },
+          {
+            from: ["/guide/rpc-api", "/wallet/reference/rpc-api"],
+            to: "/wallet/reference/json-rpc-api",
+          },
+          {
+            from: "/guide/snaps",
+            to: "/snaps",
+          },
+          {
+            from: "/snaps/category/get-started",
+            to: "/snaps/get-started",
+          },
+          {
+            from: "/snaps/get-started/install-snaps",
+            to: "/snaps/get-started/install-flask",
+          },
+          {
+            from: ["/guide/snaps-concepts", "/snaps/category/concepts", "/snaps/concepts/lifecycle", "/snaps/concepts/user-interface", "/snaps/concepts/overview", "/snaps/concepts", "/snaps/concepts/apis", "/snaps/concepts/execution-environment"],
+            to: "/snaps/learn/about-snaps",
+          },
+          {
+            from: ["/snaps/concepts/anatomy", "/snaps/concepts/files"],
+            to: "/snaps/learn/about-snaps/files",
+          },
+          {
+            from: ["/snaps/category/tutorials", "/snaps/tutorials"],
+            to: "/snaps/learn/tutorials",
+          },
+          {
+            from: "/snaps/tutorials/gas-estimation",
+            to: "/snaps/learn/tutorials/gas-estimation",
+          },
+          {
+            from: "/snaps/tutorials/transaction-insights",
+            to: "/snaps/learn/tutorials/transaction-insights",
+          },
+          {
+            from: "/snaps/category/how-to",
+            to: "/snaps/how-to",
+          },
+          {
+            from: "/snaps/how-to/use-custom-ui",
+            to: "/snaps/features/custom-ui",
+          },
+          {
+            from: "/snaps/how-to/localize-a-snap",
+            to: "/snaps/features/localization",
+          },
+          {
+            from: "/snaps/how-to/manage-keys",
+            to: "/snaps/features/non-evm-networks",
+          },
+          {
+            from: "/snaps/concepts/keyring-api",
+            to: "/snaps/features/custom-evm-accounts",
+          },
+          {
+            from: "/snaps/tutorials/custom-evm-accounts",
+            to: "/snaps/features/custom-evm-accounts/create-account-snap",
+          },
+          {
+            from: ["/snaps/concepts/design-guidelines", "/snaps/how-to/design-a-snap"],
+            to: "/snaps/learn/best-practices/design-guidelines",
+          },
+          {
+            from: ["/snaps/concepts/security-guidelines", "/snaps/how-to/secure-a-snap"],
+            to: "/snaps/learn/best-practices/security-guidelines",
+          },
+          {
+            from: "/guide/snaps-permissions",
+            to: "/snaps/how-to/request-permissions",
+          },
+          {
+            from: ["/guide/snaps-patching-dependencies", "/snaps/how-to/troubleshoot"],
+            to: "/snaps/how-to/debug-a-snap/common-issues",
+          },
+          {
+            from: ["/guide/snaps-development-guide", "/snaps/how-to/develop-a-snap"],
+            to: "/snaps/how-to/publish-a-snap",
+          },
+          {
+            from: ["/snaps/how-to/work-with-existing-snaps", "/snaps/how-to/use-3rd-party-snaps"],
+            to: "/snaps/how-to/connect-to-a-snap",
+          },
+          {
+            from: "/snaps/category/reference",
+            to: "/snaps/reference",
+          },
+          {
+            from: ["/guide/snaps-rpc-api", "/snaps/reference/rpc-api"],
+            to: "/snaps/reference/snaps-api",
+          },
+          {
+            from: ["/guide/snaps-exports", "/snaps/reference/exports"],
+            to: "/snaps/reference/entry-points",
           },
         ].reduce((acc, item) => {
           acc.push(item);
@@ -349,19 +364,42 @@ const config = {
           return acc;
         }, []),
         createRedirects(existingPath) {
-          if (existingPath.includes("/connect/set-up-sdk")) {
+          if (existingPath.includes("/use-sdk")) {
+            // Redirect from /connect/set-up-sdk/X to /use-sdk/X
             return [
-              existingPath.replace("/connect/set-up-sdk", "/use-sdk"),
+              existingPath.replace("/use-sdk", "/connect/set-up-sdk"),
+            ];
+          }
+          if (existingPath.includes("/use-sdk/gaming/unity")) {
+            return [
+              existingPath.replace("/use-sdk/gaming/unity", "/interact-with-smart-contracts/unity"),
+            ];
+          }
+          if (existingPath.includes("/features/custom-evm-accounts")) {
+            return [
+              existingPath.replace("/features/custom-evm-accounts", "/how-to/use-keyring-api"),
             ];
           }
           return undefined;
         },
       },
     ],
+    isProd ? 
+      [
+        "docusaurus-plugin-segment",
+        {
+          apiKey: process.env.SEGMENT_ANALYTICS_KEY,
+          load: { cookie: { sameSite: "None", secure: true } },
+          page: true,
+        },
+      ] : null,
   ],
   themeConfig:
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
+      metadata: [
+        { name: "og:image", content: "/img/metamaskog.jpeg" },
+      ],
       navbar: {
         title: " │ ‎ Documentation",
         logo: {
@@ -376,18 +414,23 @@ const config = {
             label: "Wallet",
           },
           {
-            to: "/wallet/how-to/connect/set-up-sdk",
-            label: "SDK",
-          },
-          {
             to: "snaps",
             label: "Snaps",
+          },
+          {
+            to: "services",
+            label: "Services",
+          },
+          {
+            to: "whats-new",
+            label: "What's new?",
+            position: "right",
           },
         ],
       },
       docs: {
         sidebar: {
-          autoCollapseCategories: true,
+          autoCollapseCategories: false,
         },
       },
       footer: {
@@ -400,52 +443,48 @@ const config = {
         },
         links: [
           {
-            title: "Wallet",
+            title: "Documentation",
             items: [
               {
-                label: "Introduction",
+                label: "Home",
+                to: "/",
+              },
+              {
+                label: "MetaMask wallet",
                 to: "/wallet",
               },
               {
-                label: "How to guides",
-                to: "/wallet/how-to",
+                label: "MetaMask SDK",
+                to: "/sdk",
               },
               {
-                label: "Concepts",
-                to: "/wallet/concepts",
+                label: "Snaps",
+                to: "/snaps",
               },
               {
-                label: "Tutorials",
-                to: "/wallet/tutorials",
-              },
-              {
-                label: "Reference",
-                to: "/wallet/reference",
+                label: "Services",
+                to: "/services",
               },
             ],
           },
           {
-            title: "Snaps",
+            title: "GitHub",
             items: [
               {
-                label: "Introduction",
-                to: "/snaps",
+                label: "Documentation GitHub",
+                href: "https://github.com/MetaMask/metamask-docs",
               },
               {
-                label: "Get started",
-                to: "/snaps/get-started",
+                label: "MetaMask wallet GitHub",
+                href: "https://github.com/MetaMask/metamask-extension/",
               },
               {
-                label: "How to guides",
-                to: "/snaps/how-to",
+                label: "MetaMask SDK GitHub",
+                href: "https://github.com/MetaMask/metamask-sdk/",
               },
               {
-                label: "Tutorials",
-                to: "/snaps/tutorials",
-              },
-              {
-                label: "Reference",
-                to: "/snaps/reference",
+                label: "Snaps GitHub",
+                href: "https://github.com/MetaMask/snaps-monorepo",
               },
             ],
           },
@@ -457,16 +496,12 @@ const config = {
                 href: "https://discord.gg/consensys",
               },
               {
-                label: "Documentation GitHub",
-                href: "https://github.com/MetaMask/metamask-docs",
+                label: "Contribute to MetaMask",
+                href: "https://github.com/MetaMask/metamask-extension/blob/develop/docs/README.md",
               },
               {
-                label: "MetaMask wallet GitHub",
-                href: "https://github.com/MetaMask/metamask-extension/",
-              },
-              {
-                label: "Snaps GitHub",
-                href: "https://github.com/MetaMask/snaps-monorepo",
+                label: "Contribute to the docs",
+                href: "https://github.com/MetaMask/metamask-docs/blob/main/CONTRIBUTING.md",
               },
             ],
           },
@@ -486,7 +521,7 @@ const config = {
                 href: "https://metamask.io/cla/",
               },
               {
-                html: "<button id='manage-cookie-btn'>Manage cookie</button>",
+                html: "<button id='manage-cookie-btn'>Manage cookies</button>",
               },
             ],
           },
