@@ -15,14 +15,14 @@ Snaps can access the global object `snap`, which has one method: `request`.
 You can use this object to make [Snaps API](../../reference/snaps-api.md) requests.
 These API methods allow Snaps to extend or modify the functionality of MetaMask.
 
-To call each method, you must first [request permission](../../how-to/request-permissions.md) in the Snap
-manifest file.
+To call each method (except the [interactive UI methods](../../reference/snaps-api.md#interactive-ui-methods)),
+you must first [request permission](../../how-to/request-permissions.md) in the Snap manifest file.
 For example, to call [`snap_notify`](../../reference/snaps-api.md#snap_notify), first request the
 `snap_notify` permission:
 
 ```json title="snap.manifest.json"
 "initialPermissions": {
-    "snap_notify": {}
+  "snap_notify": {}
 }
 ```
 
@@ -30,50 +30,53 @@ Your Snap can then call `snap_notify` in its source code:
 
 ```typescript title="index.ts"
 await snap.request({
-    method: "snap_notify",
-    params: {
-        type: "inApp",
-        message: "Hello, world!",
-    },
+  method: "snap_notify",
+  params: {
+    type: "inApp",
+    message: "Hello, world!",
+  },
 });
 ```
 
-## MetaMask JSON-RPC API
+## Wallet API
 
 ### Dapp requests
 
 Dapps can install and communicate with Snaps using the following
-[MetaMask JSON-RPC API](/wallet/reference/json-rpc-api) methods:
+[Wallet API methods for Snaps](../../reference/wallet-api-for-snaps.md):
 
-- [`wallet_getSnaps`](/wallet/reference/wallet_getsnaps) - Gets the dapp's permitted Snaps.
-- [`wallet_requestSnaps`](/wallet/reference/wallet_requestsnaps) - Requests permission to
-  communicate with the specified Snaps.
-- [`wallet_snap`](/wallet/reference/wallet_snap) - (Restricted) Calls the specified custom JSON-RPC
-  API method of the specified Snap.
-- [`wallet_invokeSnap`](/wallet/reference/wallet_invokesnap) - (Restricted) Synonymous with `wallet_snap`.
+- [`wallet_getSnaps`](../../reference/wallet-api-for-snaps.md#wallet_getsnaps) - Gets the dapp's
+  permitted Snaps.
+- [`wallet_requestSnaps`](../../reference/wallet-api-for-snaps.md#wallet_requestsnaps) - Requests
+  permission to communicate with the specified Snaps.
+- [`wallet_snap`](../../reference/wallet-api-for-snaps.md#wallet_snap) - (Restricted) Calls the
+  specified custom JSON-RPC API method of the specified Snap.
+- [`wallet_invokeSnap`](../../reference/wallet-api-for-snaps.md#wallet_invokesnap) - (Restricted)
+  Synonymous with `wallet_snap`.
 
-A dapp must first request permission to communicate with a Snap using `wallet_requestSnaps`.
+A dapp must first [request permission](../../how-to/request-permissions.md#request-permissions-from-a-dapp)
+to communicate with a Snap using `wallet_requestSnaps`.
 The dapp can then call `wallet_snap` or `wallet_invokeSnap` on the permitted Snap.
 For example, to call `wallet_snap`:
 
 ```js title="index.js"
 // Request permission to connect to the Snap.
 await window.ethereum.request({
-    method: "wallet_requestSnaps",
-    params: {
-        "npm:hello-snap": {},
-    },
+  method: "wallet_requestSnaps",
+  params: {
+    "npm:hello-snap": {},
+  },
 });
 
 // Call the "hello" method of the Snap using wallet_snap.
 const response = await window.ethereum.request({
-    method: "wallet_snap",
-    params: {
-        snapId: "npm:hello-snap",
-        request: { 
-            method: "hello",
-        },
+  method: "wallet_snap",
+  params: {
+    snapId: "npm:hello-snap",
+    request: { 
+      method: "hello",
     },
+  },
 });
 
 console.log(response); // "world!"
@@ -81,7 +84,7 @@ console.log(response); // "world!"
 
 ### Snap requests
 
-Snaps can also call some MetaMask JSON-RPC API methods using the `ethereum` global, which is an
+Snaps can also call some Wallet JSON-RPC API methods using the `ethereum` global, which is an
 [EIP-1193](https://eips.ethereum.org/EIPS/eip-1193) provider.
 
 To expose `ethereum` to the Snap execution environment, a Snap must first request the
@@ -91,7 +94,7 @@ the required permission:
 
 ```json title="snap.manifest.json"
 "initialPermissions": {
-    "endowment:ethereum-provider": {}
+  "endowment:ethereum-provider": {}
 }
 ```
 
@@ -103,9 +106,9 @@ await ethereum.request({ "method": "eth_requestAccounts" });
 
 The `ethereum` global available to Snaps has fewer capabilities than `window.ethereum` for dapps.
 Snaps can only use it to make read requests, not to write to the blockchain or initiate transactions.
-Snaps can call all MetaMask API methods **except** the following:
+Snaps can call all Wallet JSON-RPC API methods **except** the following:
 
-- [`wallet_requestSnaps`](/wallet/reference/wallet_requestSnaps)
+- [`wallet_requestSnaps`](../../reference/wallet-api-for-snaps.md#wallet_requestsnaps)
 - [`wallet_requestPermissions`](/wallet/reference/wallet_requestPermissions)
 - [`wallet_revokePermissions`](/wallet/reference/wallet_revokePermissions)
 - [`wallet_addEthereumChain`](/wallet/reference/wallet_addEthereumChain)
@@ -141,9 +144,9 @@ Set `dapps` to `true` to enable dapps to make JSON-RPC requests.
 
 ```json title="snap.manifest.json"
 "initialPermissions": {
-    "endowment:rpc": {
-        "dapps": true
-    }
+  "endowment:rpc": {
+    "dapps": true
+  }
 }
 ```
 
@@ -151,14 +154,14 @@ Your Snap can then implement and expose a custom API using the `onRpcRequest` fu
 
 ```typescript title="index.ts"
 module.exports.onRpcRequest = async ({ origin, request }) => {
-    switch (request.method) {
-        // Expose a "hello" JSON-RPC method to dapps.
-        case "hello":
-            return "world!";
-    
-        default:
-            throw new Error("Method not found.");
-    }
+  switch (request.method) {
+    // Expose a "hello" JSON-RPC method to dapps.
+    case "hello":
+      return "world!";
+
+    default:
+      throw new Error("Method not found.");
+  }
 };
 ```
 
@@ -168,22 +171,22 @@ A dapp can then install the Snap and call the exposed method:
 // Request permission to connect to the Snap.
 // If the Snap is not already installed, the user will be prompted to install it.
 await window.ethereum.request({
-    method: "wallet_requestSnaps",
-    params: {
-        // Assuming the Snap is published to npm using the package name "hello-snap".
-        "npm:hello-snap": {},
-    },
+  method: "wallet_requestSnaps",
+  params: {
+    // Assuming the Snap is published to npm using the package name "hello-snap".
+    "npm:hello-snap": {},
+  },
 });
 
 // Invoke the "hello" JSON-RPC method exposed by the Snap.
 const response = await window.ethereum.request({
-    method: "wallet_invokeSnap",
-    params: {
-        snapId: "npm:hello-snap",
-        request: {
-            method: "hello",
-        },
+  method: "wallet_invokeSnap",
+  params: {
+    snapId: "npm:hello-snap",
+    request: {
+      method: "hello",
     },
+  },
 });
 
 console.log(response); // "world!"

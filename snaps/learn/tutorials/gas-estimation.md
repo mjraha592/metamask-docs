@@ -106,12 +106,12 @@ and add `iconPath` with the value `"images/gas.svg"` to point to your new icon:
 
 ```json title="snap.manifest.json"
 "location": {
-    "npm": {
-        "filePath": "dist/bundle.js",
-        "iconPath": "images/gas.svg",
-        "packageName": "snap",
-        "registry": "https://registry.npmjs.org/"
-    }
+  "npm": {
+    "filePath": "dist/bundle.js",
+    "iconPath": "images/gas.svg",
+    "packageName": "snap",
+    "registry": "https://registry.npmjs.org/"
+  }
 }
 ```
 
@@ -120,9 +120,9 @@ Edit the `files` array and add the `images/` folder:
 
 ```json title="package.json"
 "files": [
-    "dist/",
-    "images/",
-    "snap.manifest.json"
+  "dist/",
+  "images/",
+  "snap.manifest.json"
 ],
 ```
 
@@ -134,12 +134,12 @@ permission by adding `"endowment:network-access": {}` to the `initialPermissions
 
 ```json title="snap.manifest.json"
 "initialPermissions": {
-    "snap_dialog": {},
-    "endowment:rpc": {
-        "dapps": true,
-        "snaps": false
-    }, 
-    "endowment:network-access": {}
+  "snap_dialog": {},
+  "endowment:rpc": {
+    "dapps": true,
+    "snaps": false
+  }, 
+  "endowment:network-access": {}
 },
 "manifestVersion": "0.1"
 ```
@@ -157,8 +157,8 @@ import type { OnRpcRequestHandler } from "@metamask/snaps-sdk";
 import { panel, text } from "@metamask/snaps-sdk";
 
 async function getFees() {
-    const response = await fetch("https://beaconcha.in/api/v1/execution/gasnow"); 
-    return response.text();
+  const response = await fetch("https://beaconcha.in/api/v1/execution/gasnow"); 
+  return response.text();
 }
 ```
 
@@ -180,19 +180,19 @@ Update the `hello` method with the following code:
 
 ```typescript title="index.ts"
 case "hello":
-    return getFees().then(fees => {
-        return snap.request({
-            method: 'snap_dialog',
-            params: {
-                type: "alert",
-                content: panel([
-                    text(`Hello, **${origin}**!`),
-                    text("Current gas fee estimates:"),
-                    copyable(fees),
-                ]),
-            }
-        });
+  return getFees().then(fees => {
+    return snap.request({
+      method: 'snap_dialog',
+      params: {
+        type: "alert",
+        content: panel([
+          text(`Hello, **${origin}**!`),
+          text("Current gas fee estimates:"),
+          copyable(fees),
+        ]),
+      }
     });
+  });
 ```
 
 ### 5. Build and test the Snap
@@ -246,15 +246,16 @@ You can also update the fields in `snap.manifest.json` to match your custom Snap
 
 - `proposedName` - The name of your Snap.
 - `description` - The description of your Snap.
-- `repository` - The URL of your cloned GitHub repository.
 - `source` - The `shasum` is set automatically when you build from the command line.
   If you decided to publish your Snap to `npm`, update the `location` to its published location.
 
-Similarly, you should update the `name`, `version`, `description`, and `repository` sections of
-`/packages/snap/package.json` even if you do not plan to publish your Snap to [`npm`](https://www.npmjs.com/).
+Similarly, you should update the `name`, `version`, `description`, and `repository` fields of
+`/packages/snap/package.json` even if you do not plan to publish your Snap to npm.
 
-:::tip
-The `version` field in `snap.manifest.json` inherits the `version` field from `package.json`.
+:::caution important
+The `version` and `repository` fields in `snap.manifest.json` inherit the values from
+`package.json` and overwrite them in `snap.manifest.json`.
+We recommend updating `version` and `repository` in `package.json` first, then building the Snap project.
 :::
 
 You can update the content of `/packages/site/src/pages/index.tsx` by changing the

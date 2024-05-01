@@ -1,6 +1,6 @@
 ---
 description: See the Snaps permissions reference.
-sidebar_position: 4
+sidebar_position: 5
 ---
 
 import Tabs from '@theme/Tabs';
@@ -18,7 +18,7 @@ manifest file:
 
 ```json title="snap.manifest.json"
 "initialPermissions": {
-    "snap_dialog": {}
+  "snap_dialog": {}
 }
 ```
 
@@ -26,9 +26,16 @@ manifest file:
 
 ### `endowment:cronjob`
 
-To run periodic actions for the user (cron jobs), a Snap must request the `endowment:cronjob` permission.
+To run [cron jobs](../features/cron-jobs.md) for the user, a Snap must request the `endowment:cronjob` permission.
 This permission allows the Snap to specify cron jobs that trigger the
 [`onCronjob`](../reference/entry-points.md#oncronjob) entry point.
+
+This permission takes an object with an array of `jobs`, each containing two parameters:
+
+- `expression` - A [cron expression](https://docs.oracle.com/cd/E12058_01/doc/doc.1014/e12030/cron_expressions.htm)
+  that defines the schedule of the job.
+- `request` - A JSON-RPC request object that will be sent to the Snap's `onCronjob` entry point when
+  the job is executed.
 
 :::tip
 You can modify the cron job's execution limit using [Snap-defined timeouts](#snap-defined-timeouts).
@@ -38,28 +45,28 @@ Specify this permission in the manifest file as follows:
 
 ```json title="snap.manifest.json"
 "initialPermissions": {
-    "endowment:cronjob": {
-        "jobs": [
-            {
-                "expression": "* * * * *",
-                "request": {
-                    "method": "exampleMethodOne",
-                    "params": {
-                        "param1": "foo"
-                    }
-                }
-            },
-            {
-                "expression": "*/2 * * * *",
-                "request": {
-                    "method": "exampleMethodTwo",
-                    "params": {
-                        "param1": "bar"
-                    }
-                }
-            }
-        ]
-    }
+  "endowment:cronjob": {
+    "jobs": [
+      {
+        "expression": "* * * * *",
+        "request": {
+          "method": "exampleMethodOne",
+          "params": {
+            "param1": "foo"
+          }
+        }
+      },
+      {
+        "expression": "*/2 * * * *",
+        "request": {
+          "method": "exampleMethodTwo",
+          "params": {
+            "param1": "bar"
+          }
+        }
+      }
+    ]
+  }
 }
 ```
 
@@ -74,7 +81,7 @@ Specify this permission in the manifest file as follows:
 
 ```json title="snap.manifest.json"
 "initialPermissions": {
-    "endowment:ethereum-provider": {}
+  "endowment:ethereum-provider": {}
 }
 ```
 
@@ -88,40 +95,45 @@ See the [list of methods](../learn/about-snaps/apis.md#metamask-json-rpc-api) no
 To present a dedicated UI within MetaMask, a Snap must request the `endowment:page-home` permission. 
 This permission allows the Snap to specify a "home page" by exposing the
 [`onHomePage`](../reference/entry-points.md#onhomepage) entry point. 
-You can use any [custom UI components](../features/custom-ui.md) to build an embedded home page accessible through the Snaps menu.
+You can use any [custom UI components](../features/custom-ui/index.md) to build an embedded home page accessible through the Snaps menu.
 
 Specify this permission in the manifest file as follows:
 
 ```json title="snap.manifest.json"
 "initialPermissions": {
-    "endowment:page-home": {}
+  "endowment:page-home": {}
 }
 ```
 
 ### `endowment:keyring`
 
-For a dapp to call [Keyring API](../features/custom-evm-accounts/index.md) methods on an account management Snap,
-the Snap must configure a list of allowed dapp URLs using the `endowment:keyring` permission.
+For a dapp to call [Account Management API](keyring-api/account-management/index.md) methods on an
+account management Snap to integrate [custom EVM accounts](../features/custom-evm-accounts/index.md),
+the Snap must configure a list of allowed dapp URLs using the `allowedOrigins` field of the `endowment:keyring` permission.
+This permission grants a Snap access to Account Management API requests sent to the Snap, using the
+[`onKeyringRequest`](entry-points.md#onkeyringrequest) entry point.
+
 If a dapp hosted on a domain not listed in the `allowedOrigins` attempts to call a Keyring API method,
 MetaMask rejects the request.
 
 :::tip
-You can modify the Keyring API's execution limit using [Snap-defined timeouts](#snap-defined-timeouts).
+You can modify the Account Management API's execution limit using [Snap-defined timeouts](#snap-defined-timeouts).
 :::
 
 Specify this permission in the manifest file as follows:
 
 ```json title="snap.manifest.json"
 "initialPermissions": {
-    "endowment:keyring": {
-        "allowedOrigins": ["https://<dapp domain>"]
-    }
+  "endowment:keyring": {
+    "allowedOrigins": ["https://<dapp domain>"]
+  }
 }
 ```
 
 ### `endowment:lifecycle-hooks`
 
-To run an action when the user installs or updates the Snap, a Snap must request the `endowment:lifecycle-hooks` permission.
+To implement a [lifecycle hook](../features/lifecycle-hooks.md) that runs an action when a user
+installs or updates a Snap, the Snap must request the `endowment:lifecycle-hooks` permission.
 This permission allows the Snap to expose the 
 [`onInstall`](../reference/entry-points.md#oninstall) and 
 [`onUpdate`](../reference/entry-points.md#onupdate) 
@@ -135,7 +147,7 @@ Specify this permission in the manifest file as follows:
 
 ```json title="snap.manifest.json"
 "initialPermissions": {
-    "endowment:lifecycle-hooks": {}
+  "endowment:lifecycle-hooks": {}
 }
 ```
 
@@ -168,13 +180,13 @@ Specify this permission in the manifest file as follows:
 
 ```json title="snap.manifest.json"
 "initialPermissions": {
-    "endowment:name-lookup": {
-        "chains": ["eip155:1"],
-        "matchers": {
-            "tlds": ["crypto"],
-            "schemes": ["farcaster"]
-        }
+  "endowment:name-lookup": {
+    "chains": ["eip155:1"],
+    "matchers": {
+      "tlds": ["crypto"],
+      "schemes": ["farcaster"]
     }
+  }
 },
 ```
 
@@ -197,7 +209,7 @@ Specify this permission in the manifest file as follows:
 
 ```json title="snap.manifest.json"
 "initialPermissions": {
-    "endowment:network-access": {}
+  "endowment:network-access": {}
 }
 ```
 
@@ -229,10 +241,10 @@ Specify this permission in the manifest file as follows:
 
 ```json title="snap.manifest.json"
 "initialPermissions": {
-    "endowment:rpc": {
-        "dapps": true,
-        "snaps": false
-    }
+  "endowment:rpc": {
+    "dapps": true,
+    "snaps": false
+  }
 }
 ```
 
@@ -245,13 +257,13 @@ Specify this caveat in the manifest file as follows:
 
 ```json title="snap.manifest.json"
 "initialPermissions": {
-    "endowment:rpc": { 
-        "allowedOrigins": [
-            "metamask.io", 
-            "consensys.io",
-            "npm:@metamask/example-snap"
-        ] 
-    }
+  "endowment:rpc": { 
+    "allowedOrigins": [
+      "https://metamask.io", 
+      "https://consensys.io",
+      "npm:@metamask/example-snap"
+    ] 
+  }
 }
 ```
 
@@ -280,9 +292,9 @@ Specify this permission in the manifest file as follows:
 
 ```json title="snap.manifest.json"
 "initialPermissions": {
-    "endowment:transaction-insight": {
-        "allowTransactionOrigin": true
-    }
+  "endowment:transaction-insight": {
+    "allowTransactionOrigin": true
+  }
 }
 ```
 
@@ -305,9 +317,9 @@ Specify this permission in the manifest file as follows:
 
 ```json title="snap.manifest.json"
 "initialPermissions": {
-    "endowment:signature-insight": {
-        "allowSignatureOrigin": true
-    }
+  "endowment:signature-insight": {
+    "allowSignatureOrigin": true
+  }
 },
 ```
 
@@ -320,7 +332,7 @@ Specify this permission in the manifest file as follows:
 
 ```json title="snap.manifest.json"
 "initialPermissions": {
-    "endowment:webassembly": {}
+  "endowment:webassembly": {}
 }
 ```
 
@@ -335,9 +347,9 @@ For example:
 
 ```json title="snap.manifest.json"
 "initialPermissions": {
-    "endowment:transaction-insight": {
-        "maxRequestTime": 10000
-    }
+  "endowment:transaction-insight": {
+    "maxRequestTime": 10000
+  }
 }
 ```
 
@@ -365,7 +377,7 @@ Calling `eth_requestAccounts` requires the
 
 ```json title="snap.manifest.json"
 "initialPermissions": {
-    "endowment:ethereum-provider": {}
+  "endowment:ethereum-provider": {}
 }
 ```
 
@@ -388,18 +400,18 @@ The following is an example `eth_accounts` permission:
 
 ```json
 {
-    "id": "47vm2UUi1pccNAeYKGmwF",
-    "parentCapability": "eth_accounts",
-    "invoker": "npm:SNAP_ID",
-    "caveats": [
-        {
-            "type": "restrictReturnedAccounts",
-            "value": [
-                "0xc403b37bf1e700cb214ea1be9de066824b420de6"
-            ]
-        }
-    ],
-    "date": 1692616452846
+  "id": "47vm2UUi1pccNAeYKGmwF",
+  "parentCapability": "eth_accounts",
+  "invoker": "npm:SNAP_ID",
+  "caveats": [
+    {
+      "type": "restrictReturnedAccounts",
+      "value": [
+        "0xc403b37bf1e700cb214ea1be9de066824b420de6"
+      ]
+    }
+  ],
+  "date": 1692616452846
 }
 ```
 
