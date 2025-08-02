@@ -27,7 +27,7 @@
     "@metamask/docusaurus-openrpc": "^0.3.1",
     "clsx": "^1.2.1",
     "docusaurus-plugin-segment": "^1.0.4",
-    "i18next": "^23.11.1",
+    "i18next": "^23.16.8",
     "i18next-browser-languagedetector": "^7.2.1",
     "node-polyfill-webpack-plugin": "^2.0.1",
     "prettier": "^3.0.0",
