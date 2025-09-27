@@ -18,13 +18,13 @@
     "lint:fix": "eslint . --fix"
   },
   "dependencies": {
-    "@docusaurus/core": "2.4.3",
+    "@docusaurus/core": "3.9.0",
     "@docusaurus/plugin-content-docs": "2.4.3",
     "@docusaurus/theme-common": "2.4.3",
     "@docusaurus/theme-mermaid": "2.4.3",
     "@mdx-js/react": "^1.6.22",
     "@metamask/design-tokens": "^1.11.1",
-    "@metamask/docusaurus-openrpc": "^0.3.1",
+    "@metamask/docusaurus-openrpc": "^0.4.0",
     "clsx": "^1.2.1",
     "docusaurus-plugin-segment": "^1.0.4",
     "i18next": "^23.11.1",
