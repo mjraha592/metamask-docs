@@ -1,0 +1,802 @@
+{
+  "cleanUrls": true,
+  "trailingSlash": true,
+  "redirects": [
+    {
+      "source": "/developer-tools/dashboard/how-to/project-sharing/",
+      "destination": "/developer-tools/dashboard/"
+    },
+    {
+      "source": "/guide/",
+      "destination": "/wallet/"
+    },
+    {
+      "source": "/guide/:path*/",
+      "destination": "/wallet/"
+    },
+    {
+      "source": "/wallet/index/",
+      "destination": "/wallet/"
+    },
+    {
+      "source": "/wallet/category/get-started/",
+      "destination": "/wallet/"
+    },
+    {
+      "source": "/wallet/how-to/get-started-building/",
+      "destination": "/wallet/"
+    },
+    {
+      "source": "/guide/metamask-extension-provider/",
+      "destination": "/wallet/"
+    },
+    {
+      "source": "/wallet/quickstart/:path*/",
+      "destination": "/wallet/"
+    },
+    {
+      "source": "/wallet/how-to/discover-multiple-wallets/",
+      "destination": "/wallet/"
+    },
+    {
+      "source": "/wallet/how-to/detect-wallet/",
+      "destination": "/wallet/"
+    },
+    {
+      "source": "/wallet/how-to/detect-wallet/multiple-wallets/",
+      "destination": "/wallet/"
+    },
+    {
+      "source": "/wallet/how-to/access-provider/",
+      "destination": "/wallet/"
+    },
+    {
+      "source": "/wallet/how-to/connect/",
+      "destination": "/sdk/"
+    },
+    {
+      "source": "/sdk/quickstart/:path*/",
+      "destination": "/sdk/connect/:path*/"
+    },
+    {
+      "source": "/sdk/introduction/supported-platforms/",
+      "destination": "/sdk/reference/supported-platforms/"
+    },
+    {
+      "source": "/sdk/introduction/llm-prompt/",
+      "destination": "/sdk/reference/llm-prompt/"
+    },
+    {
+      "source": "/sdk/introduction/supported-networks/",
+      "destination": "/sdk/"
+    },
+    {
+      "source": "/wallet/how-to/use-3rd-party-integrations/",
+      "destination": "/sdk/"
+    },
+    {
+      "source": "/wallet/how-to/use-sdk/3rd-party-libraries/",
+      "destination": "/sdk/"
+    },
+    {
+      "source": "/wallet/connect/metamask-sdk/",
+      "destination": "/sdk/"
+    },
+    {
+      "source": "/wallet/connect/metamask-sdk/:path*/",
+      "destination": "/sdk/"
+    },
+    {
+      "source": "/wallet/connect/3rd-party-libraries/",
+      "destination": "/sdk/"
+    },
+    {
+      "source": "/wallet/connect/3rd-party-libraries/wagmi/",
+      "destination": "/sdk/connect/javascript-wagmi"
+    },
+    {
+      "source": "/wallet/connect/3rd-party-libraries/web3-onboard/",
+      "destination": "/sdk/"
+    },
+    {
+      "source": "/wallet/how-to/connect/set-up-sdk/:path*/",
+      "destination": "/sdk/"
+    },
+    {
+      "source": "/wallet/how-to/use-sdk/:path*/",
+      "destination": "/sdk/"
+    },
+    {
+      "source": "/wallet/concepts/sdk/",
+      "destination": "/sdk/"
+    },
+    {
+      "source": "/guide/mobile-getting-started/",
+      "destination": "/sdk/"
+    },
+    {
+      "source": "/guide/site-compatibility-checklist/",
+      "destination": "/sdk/"
+    },
+    {
+      "source": "/guide/mobile-best-practices/",
+      "destination": "/sdk/"
+    },
+    {
+      "source": "/wallet/how-to/use-mobile/",
+      "destination": "/sdk/"
+    },
+    {
+      "source": "/wallet/how-to/integrate-with-mobile/",
+      "destination": "/sdk/"
+    },
+    {
+      "source": "/wallet/category/how-to/",
+      "destination": "/wallet/how-to/connect-extension/"
+    },
+    {
+      "source": "/wallet/how-to/",
+      "destination": "/wallet/how-to/connect-extension/"
+    },
+    {
+      "source": "/wallet/connect/",
+      "destination": "/wallet/how-to/connect-extension/"
+    },
+    {
+      "source": "/wallet/connect/wallet-api/",
+      "destination": "/wallet/how-to/connect-extension/"
+    },
+    {
+      "source": "/guide/accessing-accounts/",
+      "destination": "/wallet/how-to/access-accounts/"
+    },
+    {
+      "source": "/wallet/how-to/connect/access-accounts/",
+      "destination": "/wallet/how-to/access-accounts/"
+    },
+    {
+      "source": "/wallet/get-started/access-accounts/",
+      "destination": "/wallet/how-to/access-accounts/"
+    },
+    {
+      "source": "/wallet/how-to/manage-networks/",
+      "destination": "/wallet/how-to/manage-networks/detect-network/"
+    },
+    {
+      "source": "/wallet/get-started/detect-network/",
+      "destination": "/wallet/how-to/manage-networks/detect-network/"
+    },
+    {
+      "source": "/wallet/how-to/connect/detect-network/",
+      "destination": "/wallet/how-to/manage-networks/detect-network/"
+    },
+    {
+      "source": "/wallet/how-to/detect-network/",
+      "destination": "/wallet/how-to/manage-networks/detect-network/"
+    },
+    {
+      "source": "/wallet/how-to/add-network/",
+      "destination": "/wallet/how-to/manage-networks/add-network/"
+    },
+    {
+      "source": "/guide/signing-data/",
+      "destination": "/wallet/how-to/sign-data/"
+    },
+    {
+      "source": "/wallet/how-to/sign-data/connect-and-sign/",
+      "destination": "/sdk/guides/advanced/connect-and-sign/"
+    },
+    {
+      "source": "/wallet/how-to/use-siwe/",
+      "destination": "/wallet/how-to/sign-data/siwe/"
+    },
+    {
+      "source": "/guide/sending-transactions/",
+      "destination": "/wallet/how-to/send-transactions/"
+    },
+    {
+      "source": "/wallet/how-to/use-3rd-party-integrations/:path*/",
+      "destination": "/sdk/"
+    },
+    {
+      "source": "/wallet/how-to/make-read-only-requests/",
+      "destination": "/sdk/"
+    },
+    {
+      "source": "/wallet/how-to/batch-json-rpc-requests/",
+      "destination": "/sdk/guides/advanced/batch-requests/"
+    },
+    {
+      "source": "/wallet/how-to/display/",
+      "destination": "/wallet/how-to/display/tokens/"
+    },
+    {
+      "source": "/guide/registering-your-token/",
+      "destination": "/wallet/how-to/display/tokens/"
+    },
+    {
+      "source": "/wallet/how-to/register-token/",
+      "destination": "/wallet/how-to/display/tokens/"
+    },
+    {
+      "source": "/guide/registering-function-names/",
+      "destination": "/wallet/how-to/display/method-names/"
+    },
+    {
+      "source": "/wallet/how-to/register-method-names/",
+      "destination": "/wallet/how-to/display/method-names/"
+    },
+    {
+      "source": "/guide/defining-your-icon/",
+      "destination": "/wallet/how-to/display/icon/"
+    },
+    {
+      "source": "/wallet/how-to/set-icon/",
+      "destination": "/wallet/how-to/display/icon/"
+    },
+    {
+      "source": "/wallet/how-to/display/custom-modals/",
+      "destination": "/sdk/"
+    },
+    {
+      "source": "/wallet/how-to/request-permissions/",
+      "destination": "/wallet/how-to/manage-permissions/"
+    },
+    {
+      "source": "/wallet/how-to/interact-with-smart-contracts/:path*/",
+      "destination": "/sdk/guides/interact-with-contracts/"
+    },
+    {
+      "source": "/wallet/how-to/use-unity-sdk/",
+      "destination": "/sdk/"
+    },
+    {
+      "source": "/wallet/how-to/use-unity-sdk/:path*/",
+      "destination": "/sdk/"
+    },
+    {
+      "source": "/guide/onboarding-library/",
+      "destination": "/wallet/how-to/onboard-users/"
+    },
+    {
+      "source": "/wallet/how-to/use-onboarding-library/",
+      "destination": "/wallet/how-to/onboard-users/"
+    },
+    {
+      "source": "/wallet/get-started/run-development-network/",
+      "destination": "/wallet/how-to/run-devnet/"
+    },
+    {
+      "source": "/wallet/how-to/get-started-building/run-devnet/",
+      "destination": "/wallet/how-to/run-devnet/"
+    },
+    {
+      "source": "/wallet/how-to/get-started-building/secure-dapp/",
+      "destination": "/wallet/how-to/secure-dapp/"
+    },
+    {
+      "source": "/wallet/concepts/",
+      "destination": "/wallet/concepts/wallet-api/"
+    },
+    {
+      "source": "/wallet/category/concepts/",
+      "destination": "/wallet/concepts/wallet-api/"
+    },
+    {
+      "source": "/guide/provider-migration/",
+      "destination": "/wallet/concepts/wallet-api/"
+    },
+    {
+      "source": "/wallet/concepts/provider-api/",
+      "destination": "/wallet/concepts/wallet-api/"
+    },
+    {
+      "source": "/wallet/concepts/rpc-api/",
+      "destination": "/wallet/concepts/wallet-api/"
+    },
+    {
+      "source": "/wallet/how-to/migrate-api/",
+      "destination": "/wallet/concepts/wallet-api/"
+    },
+    {
+      "source": "/wallet/concepts/apis/",
+      "destination": "/wallet/concepts/wallet-api/"
+    },
+    {
+      "source": "/wallet/concepts/sdk/:path*/",
+      "destination": "/sdk/"
+    },
+    {
+      "source": "/wallet/concepts/architecture/",
+      "destination": "/sdk/"
+    },
+    {
+      "source": "/wallet/concepts/sdk-connections",
+      "destination": "/sdk/"
+    },
+    {
+      "source": "/wallet/concepts/android-sdk",
+      "destination": "/sdk/"
+    },
+    {
+      "source": "/guide/initializing-dapps/",
+      "destination": "/wallet/concepts/smart-contracts/"
+    },
+    {
+      "source": "/wallet/how-to/interact-with-smart-contracts/",
+      "destination": "/wallet/concepts/smart-contracts/"
+    },
+    {
+      "source": "/wallet/tutorials/",
+      "destination": "/wallet/tutorials/react-dapp-local-state/"
+    },
+    {
+      "source": "/wallet/category/tutorials/",
+      "destination": "/wallet/tutorials/react-dapp-local-state/"
+    },
+    {
+      "source": "/wallet/how-to/set-up-dev-environment/",
+      "destination": "/wallet/tutorials/javascript-dapp-simple/"
+    },
+    {
+      "source": "/wallet/get-started/set-up-dev-environment/",
+      "destination": "/wallet/tutorials/javascript-dapp-simple/"
+    },
+    {
+      "source": "/wallet/how-to/get-started-building/set-up-dev-environment/",
+      "destination": "/wallet/tutorials/javascript-dapp-simple/"
+    },
+    {
+      "source": "/wallet/get-started/detect-metamask/",
+      "destination": "/wallet/tutorials/javascript-dapp-simple/"
+    },
+    {
+      "source": "/wallet/how-to/detect-metamask/",
+      "destination": "/wallet/tutorials/javascript-dapp-simple/"
+    },
+    {
+      "source": "/wallet/how-to/detect-wallet/metamask/",
+      "destination": "/wallet/tutorials/javascript-dapp-simple/"
+    },
+    {
+      "source": "/wallet/how-to/connect/detect-metamask/",
+      "destination": "/wallet/tutorials/javascript-dapp-simple/"
+    },
+    {
+      "source": "/wallet/tutorials/simple-react-dapp/",
+      "destination": "/wallet/tutorials/react-dapp-local-state/"
+    },
+    {
+      "source": "/wallet/tutorials/react-dapp-sdk-wagmi/",
+      "destination": "/sdk/"
+    },
+    {
+      "source": "/wallet/reference/sdk-js-options/",
+      "destination": "/sdk/reference/sdk-options/"
+    },
+    {
+      "source": "/wallet/reference/sdk-unity-api/",
+      "destination": "/sdk/"
+    },
+    {
+      "source": "/wallet/reference/",
+      "destination": "/wallet/reference/json-rpc-methods/"
+    },
+    {
+      "source": "/wallet/category/reference/",
+      "destination": "/wallet/reference/json-rpc-methods/"
+    },
+    {
+      "source": "/guide/ethereum-provider/",
+      "destination": "/wallet/reference/provider-api/"
+    },
+    {
+      "source": "/wallet/reference/json-rpc-api/",
+      "destination": "/wallet/reference/json-rpc-methods/"
+    },
+    {
+      "source": "/guide/rpc-api/",
+      "destination": "/wallet/reference/json-rpc-methods/"
+    },
+    {
+      "source": "/wallet/reference/rpc-api/",
+      "destination": "/wallet/reference/json-rpc-methods/"
+    },
+    {
+      "source": "/wallet/reference/(eth_.*)",
+      "destination": "/wallet/reference/json-rpc-methods/$1"
+    },
+    {
+      "source": "/wallet/reference/(wallet_.*)",
+      "destination": "/wallet/reference/json-rpc-methods/$1"
+    },
+    {
+      "source": "/wallet/reference/(personal_.*)",
+      "destination": "/wallet/reference/json-rpc-methods/$1"
+    },
+    {
+      "source": "/wallet/reference/(web3_.*)",
+      "destination": "/wallet/reference/json-rpc-methods/$1"
+    },
+    {
+      "source": "/wallet/reference/non-evm-apis/",
+      "destination": "/wallet/how-to/use-non-evm-networks/"
+    },
+    {
+      "source": "/sdk/guides/advanced/connect-and-sign/",
+      "destination": "/sdk/guides/authenticate-users/"
+    },
+    {
+      "source": "/sdk/guides/advanced/batch-requests/",
+      "destination": "/sdk/guides/batch-requests/"
+    },
+    {
+      "source": "/sdk/guides/advanced/production-readiness/",
+      "destination": "/sdk/guides/production-readiness/"
+    },
+    {
+      "source": "/guide/snaps/",
+      "destination": "/snaps/"
+    },
+    {
+      "source": "/snaps/get-started/",
+      "destination": "/snaps/get-started/install-flask/"
+    },
+    {
+      "source": "/snaps/category/get-started/",
+      "destination": "/snaps/get-started/install-flask/"
+    },
+    {
+      "source": "/snaps/get-started/install-snaps/",
+      "destination": "/snaps/get-started/install-flask/"
+    },
+    {
+      "source": "/snaps/learn/",
+      "destination": "/snaps/learn/about-snaps/"
+    },
+    {
+      "source": "/guide/snaps-concepts/",
+      "destination": "/snaps/learn/about-snaps/"
+    },
+    {
+      "source": "/snaps/category/concepts/",
+      "destination": "/snaps/learn/about-snaps/"
+    },
+    {
+      "source": "/snaps/concepts/lifecycle/",
+      "destination": "/snaps/learn/about-snaps/"
+    },
+    {
+      "source": "/snaps/concepts/user-interface/",
+      "destination": "/snaps/learn/about-snaps/"
+    },
+    {
+      "source": "/snaps/concepts/overview/",
+      "destination": "/snaps/learn/about-snaps/"
+    },
+    {
+      "source": "/snaps/concepts/",
+      "destination": "/snaps/learn/about-snaps/"
+    },
+    {
+      "source": "/snaps/concepts/apis/",
+      "destination": "/snaps/learn/about-snaps/apis/"
+    },
+    {
+      "source": "/snaps/concepts/execution-environment/",
+      "destination": "/snaps/learn/about-snaps/execution-environment/"
+    },
+    {
+      "source": "/snaps/concepts/anatomy/",
+      "destination": "/snaps/learn/about-snaps/files/"
+    },
+    {
+      "source": "/snaps/concepts/files/",
+      "destination": "/snaps/learn/about-snaps/files/"
+    },
+    {
+      "source": "/snaps/learn/tutorials/",
+      "destination": "/snaps/learn/tutorials/gas-estimation/"
+    },
+    {
+      "source": "/snaps/category/tutorials/",
+      "destination": "/snaps/learn/tutorials/gas-estimation/"
+    },
+    {
+      "source": "/snaps/tutorials/",
+      "destination": "/snaps/learn/tutorials/gas-estimation/"
+    },
+    {
+      "source": "/snaps/tutorials/gas-estimation/",
+      "destination": "/snaps/learn/tutorials/gas-estimation/"
+    },
+    {
+      "source": "/snaps/tutorials/transaction-insights/",
+      "destination": "/snaps/learn/tutorials/transaction-insights/"
+    },
+    {
+      "source": "/snaps/learn/best-practices/",
+      "destination": "/snaps/learn/best-practices/design-guidelines/"
+    },
+    {
+      "source": "/snaps/concepts/design-guidelines/",
+      "destination": "/snaps/learn/best-practices/design-guidelines/"
+    },
+    {
+      "source": "/snaps/how-to/design-a-snap/",
+      "destination": "/snaps/learn/best-practices/design-guidelines/"
+    },
+    {
+      "source": "/snaps/concepts/security-guidelines/",
+      "destination": "/snaps/learn/best-practices/security-guidelines/"
+    },
+    {
+      "source": "/snaps/how-to/secure-a-snap/",
+      "destination": "/snaps/learn/best-practices/security-guidelines/"
+    },
+    {
+      "source": "/snaps/reference/resources/",
+      "destination": "/snaps/learn/resources/"
+    },
+    {
+      "source": "/snaps/how-to/",
+      "destination": "/snaps/how-to/request-permissions/"
+    },
+    {
+      "source": "/snaps/category/how-to/",
+      "destination": "/snaps/how-to/request-permissions/"
+    },
+    {
+      "source": "/snaps/features/",
+      "destination": "/snaps/features/cron-jobs/"
+    },
+    {
+      "source": "/snaps/how-to/use-custom-ui/",
+      "destination": "/snaps/features/custom-ui/"
+    },
+    {
+      "source": "/snaps/features/custom-ui/with-jsx/",
+      "destination": "/snaps/features/custom-ui/"
+    },
+    {
+      "source": "/snaps/how-to/localize-a-snap/",
+      "destination": "/snaps/features/localization/"
+    },
+    {
+      "source": "/snaps/how-to/manage-keys/",
+      "destination": "/snaps/features/non-evm-networks/"
+    },
+    {
+      "source": "/snaps/how-to/use-keyring-api/:path*/",
+      "destination": "/snaps/features/custom-evm-accounts/:path*/"
+    },
+    {
+      "source": "/snaps/concepts/keyring-api/",
+      "destination": "/snaps/features/custom-evm-accounts/"
+    },
+    {
+      "source": "/snaps/tutorials/custom-evm-accounts/",
+      "destination": "/snaps/features/custom-evm-accounts/create-account-snap/"
+    },
+    {
+      "source": "/guide/snaps-permissions/",
+      "destination": "/snaps/how-to/request-permissions/"
+    },
+    {
+      "source": "/guide/snaps-patching-dependencies/",
+      "destination": "/snaps/how-to/debug-a-snap/common-issues/"
+    },
+    {
+      "source": "/snaps/how-to/troubleshoot/",
+      "destination": "/snaps/how-to/debug-a-snap/common-issues/"
+    },
+    {
+      "source": "/guide/snaps-development-guide/",
+      "destination": "/snaps/how-to/debug-a-snap/common-issues/"
+    },
+    {
+      "source": "/guide/snaps-development-guide/",
+      "destination": "/snaps/how-to/publish-a-snap/"
+    },
+    {
+      "source": "/snaps/how-to/develop-a-snap/",
+      "destination": "/snaps/how-to/publish-a-snap/"
+    },
+    {
+      "source": "/snaps/how-to/work-with-existing-snaps/",
+      "destination": "/snaps/how-to/connect-to-a-snap/"
+    },
+    {
+      "source": "/snaps/how-to/use-3rd-party-snaps/",
+      "destination": "/snaps/how-to/connect-to-a-snap/"
+    },
+    {
+      "source": "/snaps/reference/",
+      "destination": "/snaps/reference/snaps-api/"
+    },
+    {
+      "source": "/snaps/category/reference/",
+      "destination": "/snaps/reference/snaps-api/"
+    },
+    {
+      "source": "/guide/snaps-rpc-api/",
+      "destination": "/snaps/reference/snaps-api/"
+    },
+    {
+      "source": "/snaps/reference/rpc-api/",
+      "destination": "/snaps/reference/snaps-api/"
+    },
+    {
+      "source": "/guide/snaps-exports/",
+      "destination": "/snaps/reference/entry-points/"
+    },
+    {
+      "source": "/snaps/reference/exports/",
+      "destination": "/snaps/reference/entry-points/"
+    },
+    {
+      "source": "/snaps/reference/cli/subcommands/",
+      "destination": "/snaps/reference/cli/"
+    },
+    {
+      "source": "/snaps/reference/cli/options/",
+      "destination": "/snaps/reference/config-options/"
+    },
+    {
+      "source": "/services/get-started/",
+      "destination": "/services/get-started/infura"
+    },
+    {
+      "source": "/services/how-to/",
+      "destination": "/services/how-to/avoid-rate-limiting"
+    },
+    {
+      "source": "/services/how-to/use-ipfs/access-ipfs-content",
+      "destination": "/services/how-to/use-ipfs/access-ipfs-content/dedicated-gateways"
+    },
+    {
+      "source": "/services/concepts/",
+      "destination": "/services/concepts/failover-protection"
+    },
+    {
+      "source": "/services/tutorials/",
+      "destination": "/services/tutorials/ethereum/authenticate-with-jwt"
+    },
+    {
+      "source": "/services/tutorials/ethereum/",
+      "destination": "/services/tutorials/ethereum/authenticate-with-jwt"
+    },
+    {
+      "source": "/services/tutorials/layer-2-networks/",
+      "destination": "/services/tutorials/layer-2-networks/deploy-an-nft-smart-contract-on-palm/"
+    },
+    {
+      "source": "/services/reference/",
+      "destination": "/services/reference/arbitrum/"
+    },
+    {
+      "source": "/services/gas-api/",
+      "destination": "/services/reference/gas-api/"
+    },
+    {
+      "source": "/services/gas-api/quickstart/",
+      "destination": "/services/reference/gas-api/quickstart/"
+    },
+    {
+      "source": "/services/gas-api/supported-networks/",
+      "destination": "/services/get-started/endpoints/#gas-api/"
+    },
+    {
+      "source": "/services/gas-api/api-reference/",
+      "destination": "/services/reference/gas-api/api-reference/"
+    },
+    {
+      "source": "/services/gas-api/api-reference/basefeehistory/",
+      "destination": "/services/reference/gas-api/api-reference/basefeehistory/"
+    },
+    {
+      "source": "/services/gas-api/api-reference/basefeepercentile/",
+      "destination": "/services/reference/gas-api/api-reference/basefeepercentile/"
+    },
+    {
+      "source": "/services/gas-api/api-reference/busythreshold/",
+      "destination": "/services/reference/gas-api/api-reference/busythreshold/"
+    },
+    {
+      "source": "/services/reference/:path*/json-rpc-methods/eth_sign/",
+      "destination": "/services/get-started/infura/"
+    },
+    {
+      "source": "/services/reference/:path*/json-rpc-methods/eth_sendtransaction/",
+      "destination": "/services/get-started/infura/"
+    },
+    {
+      "source": "/services/reference/:path*/json-rpc-methods/eth_coinbase/",
+      "destination": "/services/get-started/infura/"
+    },
+    {
+      "source": "/delegation-toolkit/how-to/create-smart-account/configure-accounts-signers/",
+      "destination": "/delegation-toolkit/guides/smart-accounts/create-smart-account/"
+    },
+    {
+      "source": "/delegation-toolkit/how-to/create-smart-account/",
+      "destination": "/delegation-toolkit/guides/smart-accounts/create-smart-account/"
+    },
+    {
+      "source": "/delegation-toolkit/how-to/send-user-operation/",
+      "destination": "/delegation-toolkit/guides/smart-accounts/send-user-operation/"
+    },
+    {
+      "source": "/delegation-toolkit/how-to/generate-multisig-signature/",
+      "destination": "/delegation-toolkit/guides/smart-accounts/generate-multisig-signature/"
+    },
+    {
+      "source": "/delegation-toolkit/how-to/configure/",
+      "destination": "/delegation-toolkit/guides/configure-toolkit/"
+    },
+    {
+      "source": "/delegation-toolkit/how-to/create-delegation/",
+      "destination": "/delegation-toolkit/guides/delegation/execute-on-smart-accounts-behalf/"
+    },
+    {
+      "source": "/delegation-toolkit/how-to/create-delegation/restrict-delegation/",
+      "destination": "/delegation-toolkit/guides/delegation/use-delegation-scopes/constrain-scope/"
+    },
+    {
+      "source": "/delegation-toolkit/how-to/redeem-delegation/",
+      "destination": "/delegation-toolkit/guides/delegation/execute-on-smart-accounts-behalf/"
+    },
+    {
+      "source": "/delegation-toolkit/get-started/quickstart/",
+      "destination": "/delegation-toolkit/get-started/smart-account-quickstart/"
+    },
+    {
+      "source": "/delegation-toolkit/get-started/eip7702-quickstart/",
+      "destination": "/delegation-toolkit/get-started/smart-account-quickstart/eip7702/"
+    },
+    {
+      "source": "/delegation-toolkit/get-started/cli-quickstart/",
+      "destination": "/delegation-toolkit/get-started/use-the-cli/"
+    },
+    {
+      "source": "/delegation-toolkit/how-to/create-delegation/create-custom-caveat-enforcer/",
+      "destination": "/tutorials/create-custom-caveat-enforcer/"
+    },
+    {
+      "source": "/delegation-toolkit/concepts/caveat-enforcers/",
+      "destination": "/delegation-toolkit/concepts/delegation/caveat-enforcers/"
+    },
+    {
+      "source": "/delegation-toolkit/reference/caveats/",
+      "destination": "/delegation-toolkit/reference/delegation/caveats/"
+    },
+    {
+      "source": "/delegation-toolkit/reference/api/delegation/",
+      "destination": "/delegation-toolkit/reference/delegation/"
+    },
+    {
+      "source": "/delegation-toolkit/reference/api/smart-account/",
+      "destination": "/delegation-toolkit/reference/smart-account/"
+    },
+    {
+      "source": "/delegation-toolkit/reference/api/experimental-actions/bundler-client",
+      "destination": "/delegation-toolkit/reference/erc7715/bundler-client/"
+    },
+    {
+      "source": "/delegation-toolkit/reference/api/experimental-actions/wallet-client",
+      "destination": "/delegation-toolkit/reference/erc7715/wallet-client/"
+    },
+    {
+      "source": "/delegation-toolkit/concepts/environment/",
+      "destination": "/delegation-toolkit/guides/configure-toolkit/"
+    },
+    {
+      "source": "/developer-tools/faucet/sepolia/",
+      "destination": "/developer-tools/faucet/"
+    },
+    {
+      "source": "/services/api/learn/pricing/",
+      "destination": "/services/get-started/pricing/credit-cost/"
+    }
+  ]
+}

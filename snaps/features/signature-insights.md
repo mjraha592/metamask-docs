@@ -1,20 +1,15 @@
 ---
 description: Provide insights to your users in MetaMask's signature confirmation flow.
-sidebar_position: 10
-sidebar_custom_props:
-  flask_only: true
+sidebar_position: 11
 ---
 
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
 
 # Signature insights
 
-:::flaskOnly
-:::
-
 You can provide signature insights before a user signs a message.
-For example, you can warn the user about potentially dangerous signature requests.
+For example, you can warn the user about risky signature requests.
 
 ## Steps
 
@@ -40,13 +35,7 @@ permission object, and set it to `true`:
 }
 ```
 
-When requesting this permission, the following displays in the MetaMask UI when a user installs the Snap:
-
-<p align="center">
-<img src={require("../assets/signature-insights-permission.png").default} alt="Signature insights permission" style={{border: "1px solid #DCDCDC"}} />
-</p>
-
-### 2. Implement `onSignature` and export it from `index.ts`
+### 2. Implement the `onSignature` entry point
 
 Expose an [`onSignature`](../reference/entry-points.md#onsignature) entry point, which receives a
 `signature` object.
@@ -61,9 +50,9 @@ shapes, depending on the signing method used:
 
 ```typescript
 interface EthSignature {
-  from: string;
-  data: string;
-  signatureMethod: "eth_sign";
+  from: string
+  data: string
+  signatureMethod: "eth_sign"
 }
 ```
 
@@ -72,9 +61,9 @@ interface EthSignature {
 
 ```typescript
 interface PersonalSignature {
-  from: string;
-  data: string;
-  signatureMethod: "personal_sign";
+  from: string
+  data: string
+  signatureMethod: "personal_sign"
 }
 ```
 
@@ -83,9 +72,9 @@ interface PersonalSignature {
 
 ```typescript
 interface SignTypedDataSignature {
-  from: string;
-  data: Record<string, any>[];
-  signatureMethod: "eth_signTypedData";
+  from: string
+  data: Record<string, any>[]
+  signatureMethod: "eth_signTypedData"
 }
 ```
 
@@ -94,9 +83,9 @@ interface SignTypedDataSignature {
 
 ```typescript
 interface SignTypedDataV3Signature {
-  from: string;
-  data: Record<string, any>;
-  signatureMethod: "eth_signTypedData_v3";
+  from: string
+  data: Record<string, any>
+  signatureMethod: "eth_signTypedData_v3"
 }
 ```
 
@@ -105,9 +94,9 @@ interface SignTypedDataV3Signature {
 
 ```typescript
 interface SignTypedDataV4Signature {
-  from: string;
-  data: Record<string, any>;
-  signatureMethod: "eth_signTypedData_v4";
+  from: string
+  data: Record<string, any>
+  signatureMethod: "eth_signTypedData_v4"
 }
 ```
 
@@ -118,17 +107,41 @@ Your Snap should use `signatureMethod` as the source of truth to identify the si
 providing insights for.
 
 Once you've identified the signature object, your Snap can run any logic, including calling APIs.
-Then, your Snap must either return `null` if it has no insights to provide, or an object with a
-`content` property and an optional `severity` property as specified in the
+Then, your Snap must either return `null` if it has no insights to provide, or an object with
+[custom UI](custom-ui/index.md) content and an optional `severity` property as specified in the
 [`onSignature`](../reference/entry-points.md#onsignature) entry point.
 
-:::caution
-Due to current MetaMask UI limitations, signature insights will only be displayed if your Snap's
-logic deems the signature to be one that a user shouldn't sign, that is, if you return a severity
-level of `SeverityLevel.Critical`.
-:::
-
 The following is an example implementation of `onSignature`:
+
+<Tabs>
+<TabItem value="JSX">
+
+```tsx title="index.tsx"
+import type { OnSignatureHandler, SeverityLevel } from "@metamask/snaps-sdk";
+import { Box, Heading, Text } from "@metamask/snaps-sdk/jsx";
+
+export const onSignature: OnSignatureHandler = async ({
+  signature,
+  signatureOrigin,
+}) => {
+  const insights = /* Get insights based on custom logic */;
+  return {
+    content: (
+      <Box>
+        <Heading>My Signature Insights</Heading>
+        <Text>Here are the insights:</Text>
+        {insights.map((insight) => (
+          <Text>{insight.value}</Text>
+        ))}
+      </Box>
+    ),
+    severity: SeverityLevel.Critical,
+  };
+};
+```
+
+</TabItem>
+<TabItem value="Functions" deprecated>
 
 ```typescript title="index.ts"
 import type { OnSignatureHandler, SeverityLevel } from "@metamask/snaps-sdk";
@@ -149,6 +162,9 @@ export const onSignature: OnSignatureHandler = async ({
   };
 };
 ```
+
+</TabItem>
+</Tabs>
 
 When your Snap returns a signature insight with a `severity` of `SeverityLevel.Critical`, the custom
 UI displays in a modal after the user selects the **Sign** button.

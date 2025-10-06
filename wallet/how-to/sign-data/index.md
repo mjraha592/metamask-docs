@@ -1,6 +1,5 @@
 ---
-description: Sign data using eth_signTypedData_v4 and personal_sign.
-sidebar_position: 4
+description: Use RPC methods to request cryptographic signatures from users.
 ---
 
 # Sign data
@@ -8,10 +7,10 @@ sidebar_position: 4
 You can use the following RPC methods to request cryptographic signatures from users:
 
 - [`eth_signTypedData_v4`](#use-eth_signtypeddata_v4) - Use this method to request the most human-readable
-  signatures that are efficient to process on-chain.
+  signatures that are efficient to process onchain.
   We recommend this for most use cases.
 - [`personal_sign`](#use-personal_sign) - Use this method for the easiest way to request human-readable
-  signatures that don't need to be efficiently processed on-chain.
+  signatures that don't need to be efficiently processed onchain.
 
 :::caution
 [`eth_sign`](../../concepts/signing-methods.md#eth_sign) is deprecated.
@@ -26,11 +25,11 @@ sign data using an unsupported method, in which case we recommend using your sta
 
 ## Use `eth_signTypedData_v4`
 
-[`eth_signTypedData_v4`](/wallet/reference/eth_signTypedData_v4)
-provides the most human-readable signatures that are efficient to process on-chain.
+[`eth_signTypedData_v4`](/wallet/reference/json-rpc-methods/eth_signtypeddata_v4)
+provides the most human-readable signatures that are efficient to process onchain.
 It follows the [EIP-712](https://eips.ethereum.org/EIPS/eip-712) specification to allow users to sign
-typed structured data that can be verified on-chain.
-It renders the structured data as usefully as possible to the user (for example, displaying known
+typed structured data that can be verified onchain.
+It renders the structured data in a useful way (for example, displaying known
 account names in place of addresses).
 
 <p align="center">
@@ -46,7 +45,7 @@ contract to provide replay protection of these signatures between different cont
 We recommend using [`eth-sig-util`](https://github.com/MetaMask/eth-sig-util) to generate and
 validate signatures.
 You can use [`eip712-codegen`](https://github.com/danfinlay/eip712-codegen#readme) to generate most
-of the Solidity required to verify these signatures on-chain.
+of the Solidity required to verify these signatures onchain.
 It currently doesn't generate the top-level struct verification code, so you must write that part manually.
 See
 [this example implementation](https://github.com/delegatable/delegatable-sol/blob/fb34bb259890417285f7185bc6500fb0ab8bf86f/contracts/Delegatable.sol#L80).
@@ -64,7 +63,7 @@ The following is an example of using `eth_signTypedData_v4` with MetaMask:
 
 ```javascript title="index.js"
 signTypedDataV4Button.addEventListener("click", async function (event) {
-  event.preventDefault();
+  event.preventDefault()
 
   // eth_signTypedData_v4 parameters. All of these parameters affect the resulting signature.
   const msgParams = JSON.stringify({
@@ -130,12 +129,12 @@ signTypedDataV4Button.addEventListener("click", async function (event) {
         { name: "wallets", type: "address[]" },
       ],
     },
-  });
+  })
 
-  var from = await web3.eth.getAccounts();
+  var from = await web3.eth.getAccounts()
 
-  var params = [from[0], msgParams];
-  var method = "eth_signTypedData_v4";
+  var params = [from[0], msgParams]
+  var method = "eth_signTypedData_v4"
 
   provider // Or window.ethereum if you don't support EIP-6963.
     .sendAsync(
@@ -145,26 +144,31 @@ signTypedDataV4Button.addEventListener("click", async function (event) {
         from: from[0],
       },
       function (err, result) {
-        if (err) return console.dir(err);
+        if (err) return console.dir(err)
         if (result.error) {
-          alert(result.error.message);
+          alert(result.error.message)
         }
-        if (result.error) return console.error("ERROR", result);
-        console.log("TYPED SIGNED:" + JSON.stringify(result.result));
+        if (result.error) return console.error("ERROR", result)
+        console.log("TYPED SIGNED:" + JSON.stringify(result.result))
 
         const recovered = sigUtil.recoverTypedSignature_v4({
           data: JSON.parse(msgParams),
           sig: result.result,
-        });
+        })
 
-        if (ethUtil.toChecksumAddress(recovered) === ethUtil.toChecksumAddress(from)) {
-          alert("Successfully recovered signer as " + from);
+        if (
+          ethUtil.toChecksumAddress(recovered) ===
+          ethUtil.toChecksumAddress(from)
+        ) {
+          alert("Successfully recovered signer as " + from)
         } else {
-          alert("Failed to verify signer when comparing " + result + " to " + from);
+          alert(
+            "Failed to verify signer when comparing " + result + " to " + from
+          )
         }
       }
-    );
-});
+    )
+})
 ```
 
 The following HTML displays a sign button:
@@ -179,30 +183,26 @@ See the [live example](https://metamask.github.io/test-dapp/#signTypedDataV4) an
 
 ## Use `personal_sign`
 
-[`personal_sign`](/wallet/reference/personal_sign) is the
-easiest way to request human-readable signatures that don't need to be efficiently processed on-chain.
+[`personal_sign`](/wallet/reference/json-rpc-methods/personal_sign) is the
+easiest way to request human-readable signatures that don't need to be efficiently processed onchain.
 It's often used for signature challenges that are authenticated on a web server, such as
 [Sign-In with Ethereum](siwe.md).
 
 <p align="center">
 
-![personal_sign](../../assets/personal_sign.png)
+![Personal sign](../../assets/personal_sign.png)
 
 </p>
 
-Some other signers implement `personal_sign` as `eth_sign`, because the Go Ethereum client changed
-the behavior of their `eth_sign` method.
-Because MetaMask supports existing applications, MetaMask implements both `personal_sign` and `eth_sign`.
-You might need to check what method your supported signers use for a given implementation.
-
 :::caution important
+
 - Don't use this method to display binary data, because the user wouldn't be able to understand what
   they're agreeing to.
 - If using this method for a signature challenge, think about what would prevent a phisher from
   reusing the same challenge and impersonating your site.
   Add text referring to your domain, or the current time, so the user can easily verify if this
   challenge is legitimate.
-:::
+  :::
 
 ### Example
 
@@ -210,24 +210,24 @@ The following is an example of using `personal_sign` with MetaMask:
 
 ```javascript title="index.js"
 personalSignButton.addEventListener("click", async function (event) {
-  event.preventDefault();
-  const exampleMessage = "Example `personal_sign` message.";
+  event.preventDefault()
+  const exampleMessage = "Example `personal_sign` message."
   try {
-    const from = accounts[0];
+    const from = accounts[0]
     // For historical reasons, you must submit the message to sign in hex-encoded UTF-8.
     // This uses a Node.js-style buffer shim in the browser.
-    const msg = `0x${Buffer.from(exampleMessage, "utf8").toString("hex")}`;
+    const msg = `0x${Buffer.from(exampleMessage, "utf8").toString("hex")}`
     const sign = await ethereum.request({
       method: "personal_sign",
       params: [msg, from],
-    });
-    personalSignResult.innerHTML = sign;
-    personalSignVerify.disabled = false;
+    })
+    personalSignResult.innerHTML = sign
+    personalSignVerify.disabled = false
   } catch (err) {
-    console.error(err);
-    personalSign.innerHTML = `Error: ${err.message}`;
+    console.error(err)
+    personalSign.innerHTML = `Error: ${err.message}`
   }
-});
+})
 ```
 
 The following HTML displays a sign button:

@@ -1,5 +1,6 @@
 ---
-sidebar_position: 6
+sidebar_position: 7
+description: Debug a Snap by inspecting the background process.
 ---
 
 # Debug a Snap
@@ -11,7 +12,7 @@ You can also see the [common issues](common-issues.md) encountered by Snap devel
 :::
 
 You can add your log statements in your source code and build your Snap, or add them directly
-to your Snap bundle and use [`yarn mm-snap manifest --fix`](../../reference/cli/subcommands.md#m-manifest)
+to your Snap bundle and use [`yarn mm-snap manifest --fix`](../../reference/cli.md#m-manifest)
 to update the `shasum` in your Snap manifest file.
 The manifest `shasum` must match the contents of your bundle at the time MetaMask fetches your Snap.
 
@@ -27,6 +28,6 @@ view its console:
 1. Go to `chrome://extensions`.
 2. Toggle **Developer mode** on in the top right corner.
 3. Find MetaMask Flask, and select **Details**.
-4. Under **Inspect views**, select `background.html`.
+4. Under **Inspect views**, select `offscreen.html`.
 
 The log output displays in the console that pops up.

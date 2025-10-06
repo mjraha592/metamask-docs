@@ -19,105 +19,62 @@ communicate with Snaps.
 
 ## `snap_dialog`
 
-Displays a dialog in the MetaMask UI.
-There are three types of dialogs with different parameters and return types: [alert](#alert-dialog),
-[confirmation](#confirmation-dialog), and [prompt](#prompt-dialog).
-
-:::caution
-Dialogs do not work when MetaMask is locked. To check if MetaMask is locked, use [`snap_getClientStatus`](#snap_getclientstatus).
-:::
-
-### Alert dialog
-
-Displays an alert that can only be acknowledged.
+Displays a [dialog](../features/custom-ui/dialogs.md) in the MetaMask UI.
 
 #### Parameters
 
-An object containing the contents of the alert dialog:
+An object containing the contents of the dialog:
 
-- `type` - The type of dialog (`"alert"`).
+- `type` - (Optional) The type of dialog. Not providing a type will create a fully [custom dialog](../features/custom-ui/dialogs.md#display-a-custom-dialog).
+  Possible values are:
+  - `"alert"` - An alert that can only be acknowledged.
+  - `"confirmation"` - A confirmation that can be accepted or rejected.
+  - `"prompt"` - A prompt where the user can enter a text response.
 - One of:
   - `content` - The content of the alert, as a [custom UI](../features/custom-ui/index.md) component.
   - `id` - The ID of an [interactive interface](#snap_createinterface).
-
-#### Example
-
-```javascript title="index.js"
-import { panel, text, heading } from "@metamask/snaps-sdk";
-
-await snap.request({
-  method: "snap_dialog",
-  params: {
-    type: "alert",
-    content: panel([
-      heading("Something happened in the system"),
-      text("The thing that happened is..."),
-    ]),
-  },
-});
-
-// Code that should execute after the alert has been acknowledged.
-```
-
-### Confirmation dialog
-
-Displays a confirmation that can be accepted or rejected.
-
-#### Parameters
-
-An object containing the contents of the confirmation dialog:
-
-- `type` - The type of dialog (`"confirmation"`).
-- One of:
-  - `content` - The content of the confirmation, as a [custom UI](../features/custom-ui/index.md) component.
-  - `id` - The ID of an [interactive interface](#snap_createinterface).
+- `placeholder` - Only used for `"prompt"` dialogs.
+  Text that will be in the input field when nothing is typed.
 
 #### Returns
 
-`true` if the confirmation was accepted, `false` otherwise.
+Return value depends on the dialog `type`:
+
+- `"alert"` - None.
+- `"confirmation"` - `true` if the confirmation was accepted, `false` otherwise.
+- `"prompt"` - The text entered by the user if the prompt was submitted or `null` if the prompt was
+  rejected or closed.
+  If the user does not enter any text and submits the prompt, the value is an empty string.
 
 #### Example
 
-```javascript title="index.js"
-import { panel, text, heading } from "@metamask/snaps-sdk";
+<Tabs>
+<TabItem value="JSX">
 
-const result = await snap.request({
+```tsx title="index.tsx"
+import { Box, Heading, Text } from "@metamask/snaps-sdk/jsx";
+
+const walletAddress = await snap.request({
   method: "snap_dialog",
   params: {
-    type: "confirmation",
-    content: panel([
-      heading("Would you like to take the action?"),
-      text("The action is..."),
-    ]),
+    type: "prompt",
+    content: (
+      <Box>
+        <Heading>What is the wallet address?</Heading>
+        <Text>Please enter the wallet address to be monitored</Text>
+      </Box>
+    ),
+    placeholder: "0x123...",
   },
 });
 
-if (result === true) {
-  // Do the action.
-}
+// walletAddress will be a string containing the address entered by the user.
 ```
 
-### Prompt dialog
+</TabItem>
+<TabItem value="Functions" deprecated>
 
-Displays a prompt where the user can enter a text response.
-
-#### Parameters
-
-An object containing the contents of the prompt dialog:
-
-- `type` - The type of dialog (`"prompt"`).
-- `placeholder` - Text that will be in the input field when nothing is typed.
-- One of:
-  - `content` - The content of the confirmation, as a [custom UI](../features/custom-ui/index.md) component.
-  - `id` - The ID of an [interactive interface](#snap_createinterface).
-
-#### Returns
-
-The text entered by the user if the prompt was submitted or `null` if the prompt was rejected or closed. If the user does not enter any text and submits the prompt, the value is an empty string.
-
-#### Example
-
-```javascript title="index.js"
+```typescript title="index.ts"
 import { panel, text, heading } from "@metamask/snaps-sdk";
 
 const walletAddress = await snap.request({
@@ -130,10 +87,13 @@ const walletAddress = await snap.request({
     ]),
     placeholder: "0x123...",
   },
-});
+})
 
 // walletAddress will be a string containing the address entered by the user.
 ```
+
+</TabItem>
+</Tabs>
 
 ## `snap_getBip32Entropy`
 
@@ -143,8 +103,14 @@ You're managing the user's keys and assets on their behalf.
 Their safety is your responsibility.
 :::
 
-Gets the [SLIP-10](https://github.com/satoshilabs/slips/blob/master/slip-0010.md) key for the `path`
-and `curve` specified by the method name.
+Enables you to [manage users' non-EVM accounts](../features/non-evm-networks.md) by deriving
+the [SLIP-10](https://github.com/satoshilabs/slips/blob/master/slip-0010.md) keys
+specified by the `path` and `curve` parameters.
+The keys are derived using the entropy from the user's Secret Recovery Phrase.
+
+If the keys you want to derive conform to the [BIP-44](https://github.com/bitcoin/bips/blob/master/bip-0044.mediawiki) structure,
+use [`snap_getBip44Entropy`](#snap_getbip44entropy) instead.
+Otherwise, use this method.
 
 This method is designed to be used with the
 [`@metamask/key-tree`](https://npmjs.com/package/@metamask/key-tree) module.
@@ -170,8 +136,8 @@ An object representing the
 its corresponding key material:
 
 - `depth` - The 0-indexed path depth of the node.
-- `parentFingerprint` - The fingerprint of the parent key, or 0 if this is a master node.
-- `index` - The index of the node, or 0 if this is a master node.
+- `parentFingerprint` - The fingerprint of the parent key, or 0 if this is a root node.
+- `index` - The index of the node, or 0 if this is a root node.
 - `privateKey` - The private key of the node.
 - `publicKey` - The public key of the node.
 - `chainCode` - The chain code of the node.
@@ -197,7 +163,7 @@ its corresponding key material:
 <TabItem value="JavaScript">
 
 ```javascript title="index.js"
-import { SLIP10Node } from "@metamask/key-tree";
+import { SLIP10Node } from "@metamask/key-tree"
 
 // This example uses Dogecoin, which has a derivation path starting with m/44'/3'.
 const dogecoinNode = await snap.request({
@@ -207,16 +173,16 @@ const dogecoinNode = await snap.request({
     path: ["m", "44'", "3'"],
     curve: "secp256k1",
   },
-});
+})
 
 // Next, create an instance of a SLIP-10 node for the Dogecoin node.
-const dogecoinSlip10Node = await SLIP10Node.fromJSON(dogecoinNode);
+const dogecoinSlip10Node = await SLIP10Node.fromJSON(dogecoinNode)
 
 // m/44'/3'/0'
-const accountKey0 = await dogecoinSlip10Node.derive(["bip32:0'"]);
+const accountKey0 = await dogecoinSlip10Node.derive(["bip32:0'"])
 
 // m/44'/3'/1'
-const accountKey1 = await dogecoinSlip10Node.derive(["bip32:1'"]);
+const accountKey1 = await dogecoinSlip10Node.derive(["bip32:1'"])
 
 // Now, you can ask the user to sign transactions, etc.
 ```
@@ -275,10 +241,10 @@ const dogecoinPublicKey = await snap.request({
     curve: "secp256k1",
     compressed: false,
   },
-});
+})
 
 // "0x..."
-console.log(dogecoinPublicKey);
+console.log(dogecoinPublicKey)
 ```
 
 </TabItem>
@@ -292,10 +258,19 @@ You're managing the user's keys and assets on their behalf.
 Their safety is your responsibility.
 :::
 
-Gets the [BIP-44](https://github.com/bitcoin/bips/blob/master/bip-0044.mediawiki) `coin_type` key
-for the `coin_type` number specified by the method name.
+Enables you to [manage users' non-EVM accounts](../features/non-evm-networks.md) by deriving 
+the [BIP-44](https://github.com/bitcoin/bips/blob/master/bip-0044.mediawiki) keys
+specified by the `coinType` parameter.
+The keys are derived using the entropy from the user's Secret Recovery Phrase.
+
+If the keys you want to derive don't conform to the BIP-44 structure, use
+[`snap_getBip32Entropy`](#snap_getbip32entropy) instead.
+
+:::note
 See [SLIP-44](https://github.com/satoshilabs/slips/blob/master/slip-0044.md) for the list of
-available protocols and their `coin_type` values.
+available protocols and their coin types.
+To register a new coin type, create a pull request on SLIP-44.
+:::
 
 This method is designed to be used with the
 [`@metamask/key-tree`](https://npmjs.com/package/@metamask/key-tree) module.
@@ -308,11 +283,11 @@ derive an address for the relevant protocol or sign a transaction for the user.
 
 An object containing `coinType`, the BIP-44 coin type to get the entropy for.
 
-:::caution
+:::note
 Coin type 60 is reserved for MetaMask externally owned accounts and blocked for Snaps.
-If you wish to connect to MetaMask accounts in a Snap, use
-[`endowment:ethereum-provider`](../reference/permissions.md/#endowmentethereum-provider) and
-[`eth_requestAccounts`](/wallet/reference/eth_requestAccounts).
+To connect to MetaMask accounts in a Snap, use
+[`endowment:ethereum-provider`](../reference/permissions.md#endowmentethereum-provider) and
+[`eth_requestAccounts`](/wallet/reference/json-rpc-methods/eth_requestaccounts).
 :::
 
 #### Returns
@@ -350,7 +325,7 @@ and containing its corresponding key material:
 <TabItem value="JavaScript">
 
 ```javascript title="index.js"
-import { getBIP44AddressKeyDeriver } from "@metamask/key-tree";
+import { getBIP44AddressKeyDeriver } from "@metamask/key-tree"
 
 // This example uses Dogecoin, which has coin_type 3.
 const dogecoinNode = await snap.request({
@@ -358,19 +333,19 @@ const dogecoinNode = await snap.request({
   params: {
     coinType: 3,
   },
-});
+})
 
 // Next, create an address key deriver function for the Dogecoin coin_type node.
 // In this case, its path is: m/44'/3'/0'/0/address_index
-const deriveDogecoinAddress = await getBIP44AddressKeyDeriver(dogecoinNode);
+const deriveDogecoinAddress = await getBIP44AddressKeyDeriver(dogecoinNode)
 
 // These are BIP-44 nodes containing the extended private keys for the respective derivation paths.
 
 // m/44'/3'/0'/0/0
-const addressKey0 = await deriveDogecoinAddress(0);
+const addressKey0 = await deriveDogecoinAddress(0)
 
 // m/44'/3'/0'/0/1
-const addressKey1 = await deriveDogecoinAddress(1);
+const addressKey1 = await deriveDogecoinAddress(1)
 
 // Now, you can ask the user to sign transactions, etc.
 ```
@@ -385,7 +360,7 @@ Gets the locked status of the Snaps client.
 It is useful to check if MetaMask is locked in the following situations:
 
 - When running background operations that require MetaMask to be unlocked, for example,
-  [accessing encrypted state](../features/data-storage.md#2-use-encrypted-storage).
+  [accessing encrypted state](../features/data-storage.md#use-encrypted-storage).
   If MetaMask is locked, the user gets an unexpected password request.
 - When [displaying a dialog](#snap_dialog). Dialogs do not work when MetaMask is locked.
 
@@ -396,25 +371,25 @@ It is useful to check if MetaMask is locked in the following situations:
 #### Example
 
 ```typescript title="index.js"
-import type { OnCronjobHandler } from "@metamask/snaps-sdk";
-import { MethodNotFoundError } from "@metamask/snaps-sdk";
+import type { OnCronjobHandler } from "@metamask/snaps-sdk"
+import { MethodNotFoundError } from "@metamask/snaps-sdk"
 
 export const onCronjob: OnCronjobHandler = async ({ request }) => {
   switch (request.method) {
     case "execute":
       // Find out if MetaMask is locked.
       const { locked } = await snap.request({
-        method: "snap_getClientStatus"
-      });
+        method: "snap_getClientStatus",
+      })
 
       if (!locked) {
         // Do something that requires MetaMask to be unlocked, such as access encrypted state.
       }
 
     default:
-      throw new MethodNotFoundError();
+      throw new MethodNotFoundError()
   }
-};
+}
 ```
 
 ## `snap_getEntropy`
@@ -463,10 +438,10 @@ const entropy = await snap.request({
     version: 1,
     salt: "foo", // Optional.
   },
-});
+})
 
 // "0x..."
-console.log(entropy);
+console.log(entropy)
 ```
 
 </TabItem>
@@ -515,18 +490,23 @@ const contents = await snap.request({
     path: "./files/myfile.bin",
     encoding: "hex",
   },
-});
+})
 
 // "0x..."
-console.log(contents);
+console.log(contents)
 ```
 
 </TabItem>
 </Tabs>
 
-## `snap_getLocale`
+## `snap_getLocale` (deprecated)
 
 Gets the user's locale setting. You can use this method to localize text in your snap.
+
+:::warning
+This method is deprecated.
+Use [`snap_getPreferences`](#snap_getpreferences) instead.
+:::
 
 #### Returns
 
@@ -534,8 +514,11 @@ The user's locale setting as a [language code](https://github.com/MetaMask/metam
 
 #### Example
 
-```javascript title="index.js"
-import { panel, text } from "@metamask/snaps-sdk";
+<Tabs>
+<TabItem value="JSX">
+
+```tsx title="index.tsx"
+import { Box, Text } from "@metamask/snaps-sdk/jsx";
 
 const locale = await snap.request({ method: "snap_getLocale" });
 
@@ -548,9 +531,72 @@ await snap.request({
   method: "snap_dialog",
   params: {
     type: "alert",
-    content: panel([
-      text(greeting),
-    ]),
+    content: (
+      <Box>
+        <Text>{greeting}</Text>
+      </Box>
+    ),
+  },
+});
+```
+
+</TabItem>
+<TabItem value="Functions" deprecated>
+
+```typescript title="index.ts"
+import { panel, text } from "@metamask/snaps-sdk";
+
+const locale = await snap.request({ method: "snap_getLocale" })
+
+let greeting = "Hello"
+if (locale === "es") {
+  greeting = "Hola"
+}
+
+await snap.request({
+  method: "snap_dialog",
+  params: {
+    type: "alert",
+    content: panel([text(greeting)]),
+  },
+})
+```
+
+</TabItem>
+</Tabs>
+
+## `snap_getPreferences`
+
+Gets the user's preferences.
+
+#### Returns
+
+An object containing the user's preferences:
+
+- `locale` - The user's locale setting as a language code.
+- `currency` - The user's preferred fiat currency code.
+
+#### Example
+
+```tsx title="index.tsx"
+import { Box, Text } from "@metamask/snaps-sdk/jsx";
+
+const { locale } = await snap.request({ method: "snap_getPreferences" });
+
+let greeting = "Hello";
+if(locale === "es") {
+  greeting = "Hola";
+}
+
+await snap.request({
+  method: "snap_dialog",
+  params: {
+    type: "alert",
+    content: (
+      <Box>
+        <Text>{greeting}</Text>
+      </Box>
+    ),
   },
 });
 ```
@@ -566,7 +612,7 @@ This method is organized into multiple sub-methods which each take their own par
 - [`listAccounts`](#listaccounts)
 - [`submitResponse`](#submitresponse)
 
-### createAccount
+### `createAccount`
 
 Creates a new Snap account.
 
@@ -586,16 +632,15 @@ This can be done using [`snap_manageState`](#snap_managestate).
 #### Example
 
 ```typescript title="index.ts"
-import { Keyring, KeyringAccount } from "@metamask/keyring-api";
+import { Keyring, KeyringAccount } from "@metamask/keyring-api"
 
 class MyKeyring implements Keyring {
   // Other methods.
 
   async createAccount(
     name: string,
-    options: Record<string, Json> | null = null,
+    options: Record<string, Json> | null = null
   ): Promise<KeyringAccount> {
-
     const account: KeyringAccount = {
       id: uuid(),
       name,
@@ -613,7 +658,7 @@ class MyKeyring implements Keyring {
         "personal_sign",
       ],
       type: "eip155:eoa",
-    };
+    }
 
     // Store the account in state.
 
@@ -623,14 +668,14 @@ class MyKeyring implements Keyring {
         method: "createAccount",
         params: { account },
       },
-    });
+    })
 
-    return account;
+    return account
   }
 }
 ```
 
-### updateAccount
+### `updateAccount`
 
 Updates an existing Snap account.
 
@@ -650,7 +695,7 @@ This can be done using [`snap_manageState`](#snap_managestate).
 #### Example
 
 ```typescript title="index.ts"
-import { Keyring, KeyringAccount } from "@metamask/keyring-api";
+import { Keyring, KeyringAccount } from "@metamask/keyring-api"
 
 class MyKeyring implements Keyring {
   // Other methods.
@@ -664,12 +709,12 @@ class MyKeyring implements Keyring {
         method: "updateAccount",
         params: { account },
       },
-    });
+    })
   }
 }
 ```
 
-### deleteAccount
+### `deleteAccount`
 
 Deletes a Snap account.
 
@@ -689,7 +734,7 @@ This can be done using [`snap_manageState`](#snap_managestate).
 #### Example
 
 ```typescript title="index.ts"
-import { Keyring } from "@metamask/keyring-api";
+import { Keyring } from "@metamask/keyring-api"
 
 class MyKeyring implements Keyring {
   // Other methods.
@@ -703,12 +748,12 @@ class MyKeyring implements Keyring {
         method: "deleteAccount",
         params: { id },
       },
-    });
+    })
   }
 }
 ```
 
-### listAccounts
+### `listAccounts`
 
 Lists the calling Snap's accounts that are known to MetaMask.
 This method does not call back to the Snap.
@@ -743,7 +788,7 @@ class MyKeyring implements Keyring {
 }
 ```
 
-### submitResponse
+### `submitResponse`
 
 Finalizes a signing request.
 This is usually called as part of the
@@ -761,8 +806,8 @@ This is usually called as part of the
 #### Example
 
 ```typescript title="index.ts"
-import { Keyring } from "@metamask/keyring-api";
-import { Json } from "@metamask/utils";
+import { Keyring } from "@metamask/keyring-api"
+import { Json } from "@metamask/utils"
 
 class MyKeyring implements Keyring {
   // Other methods.
@@ -776,7 +821,7 @@ class MyKeyring implements Keyring {
         method: "submitResponse",
         params: { id, result },
       },
-    });
+    })
   }
 }
 ```
@@ -807,34 +852,36 @@ The value stored in state if the operation is `get`, and `null` otherwise.
 // Persist some data.
 await snap.request({
   method: "snap_manageState",
-  params: { 
+  params: {
     operation: "update",
     newState: { hello: "world" },
   },
-});
+})
 
 // At a later time, get the stored data.
 const persistedData = await snap.request({
   method: "snap_manageState",
   params: { operation: "get" },
-});
+})
 
-console.log(persistedData);
+console.log(persistedData)
 // { hello: "world" }
 
 // If there's no need to store data anymore, clear it out.
 await snap.request({
   method: "snap_manageState",
-  params: { 
+  params: {
     operation: "clear",
   },
-});
+})
 ```
 
 ## `snap_notify`
 
 Displays a [notification](../features/notifications.md) in MetaMask or natively in the OS.
-Snaps can trigger a short notification text for actionable or time sensitive information.
+Snaps can trigger a short (up to 80 characters) notification message for actionable or time sensitive information. 
+`inApp` notifications can also include an optional [expanded view](../features/notifications.md#expanded-view). 
+The expanded view has a title, content, and optional footer link shown when a user clicks on the notification.
 
 #### Parameters
 
@@ -844,8 +891,21 @@ An object containing the contents of the notification:
   We recommend using `type: "inApp"` because there's no guarantee that native notifications are
   displayed to the user.
 - `message` - A message to show in the notification.
+- Optional expanded view parameters
+  - `title` - The title of the expanded view, shown when a user expands the notification.
+  - `content` - A custom Snap UI shown in the expanded view
+  - `footerLink` (optional) - A custom footer object with `text` and `href`, displayed as an action button 
+  in the footer of the expanded view.
 
-#### Example
+:::caution
+Expanded view can only be used with notifications of type `inApp`. 
+Expanded view must have at least a `title` and `content`. 
+:::
+
+#### Examples
+
+<Tabs>
+<TabItem value="In-app">
 
 ```javascript title="index.js"
 await snap.request({
@@ -854,8 +914,48 @@ await snap.request({
     type: "inApp",
     message: "Hello, world!",
   },
-});
+})
 ```
+
+</TabItem>
+<TabItem value="In-app with Expanded View">
+
+```javascript title="index.js"
+await snap.request({
+  method: "snap_notify",
+  params: {
+    type: "inApp",
+    message: "Hello, world!",
+    title: "Hello from a Snap",
+    content: (
+      <Box>
+        <Heading>Hello, world!</Heading>
+        <Text>This is a notification sent from a Snap.</Text>
+      </Box>
+    ),
+    footerLink: { 
+      href: "https://snaps.metamask.io",
+      text: "Find more Snaps",
+    },
+  },
+})
+```
+
+</TabItem>
+<TabItem value="Native">
+
+```javascript title="index.js"
+await snap.request({
+  method: "snap_notify",
+  params: {
+    type: "native",
+    message: "Hello, world!",
+  },
+})
+```
+
+</TabItem>
+</Tabs>
 
 ## Interactive UI methods
 
@@ -871,6 +971,7 @@ Creates an interactive interface for use in [interactive UI](../features/custom-
 An object containing:
 
 - `ui` - The [custom UI](../features/custom-ui/index.md) to create.
+- `context` (optional) - A custom context object that will be passed to [`onUserInput`](./entry-points.md#onuserinput) when the user interacts with the interface.
 
 #### Returns
 
@@ -883,23 +984,22 @@ The interface's ID to be used in [`snap_dialog`](#snap_dialog), returned from
 const interfaceId = await snap.request({
   method: "snap_createInterface",
   params: {
-    ui: panel([
-      heading("Interactive interface"),
-      button({
-        value: "Click me",
-        name: "interactive-button",
-      }),
-    ])
+    ui: ( 
+      <Box>
+        <Heading>Interactive interface</Heading>
+        <Button name="interactive-button">Click me</Button>
+      </Box>
+    )
   },
-});
+})
 
 await snap.request({
   method: "snap_dialog",
   params: {
     type: "Alert",
-    id: interfaceId
-  }
-});
+    id: interfaceId,
+  },
+})
 ```
 
 ### `snap_getInterfaceState`
@@ -925,37 +1025,27 @@ An object where each top-level property can be one of the following:
 const interfaceId = await snap.request({
   method: "snap_createInterface",
   params: {
-    ui: panel([
-      heading("Interactive UI Example Snap"),
-      // A top-level input.
-      input({
-        name: "top-level-input",
-        placeholder: "Enter something",
-      }),
-      // A top-level form...
-      form({
-        name: "example-form",
-        children: [
-          // ...with a nested input.
-          input({
-            name: "nested-input",
-            placeholder: "Enter something",
-          }),
-          button("Submit", ButtonType.Submit, "submit"),
-        ],
-      }),
-    ]),
+    ui: (
+      <Box>
+        <Heading>Interactive UI Example Snap</Heading>
+        <Input name="top-level-input" placeholder="Enter something"/>
+        <Form name="example-form">
+          <Input name="nested-input" placeholder="Enter something"/>
+          <Button type="submit">Submit</Button>
+        </Form>
+      </Box>
+    )
   },
-});
+})
 
 const state = await snap.request({
   method: "snap_getInterfaceState",
   params: {
     id: interfaceId,
   },
-});
+})
 
-console.log(state);
+console.log(state)
 /*
 {
   "top-level-input": "What the user typed in that field",
@@ -965,6 +1055,68 @@ console.log(state);
 }
 */
 ```
+
+### `snap_getInterfaceContext`
+
+Gets the context of an interactive interface by its ID.
+For use in [interactive UI](../features/custom-ui/interactive-ui.md).
+
+#### Parameters
+
+- `id` - The ID of the interface.
+
+#### Returns
+
+An object of type `InterfaceContext` if a custom context object was passed when creating or updating the interface, or `null`.
+
+#### Example
+
+```js title="index.js"
+const interfaceId = await snap.request({
+  method: "snap_createInterface",
+  params: {
+    ui: (
+      <Box>
+        <Heading>Hello, world!</Heading>
+        <Text>Welcome to my Snap homepage!</Text>
+      </Box>
+    ),
+    context: { 
+      key: "value"
+    }
+  },
+})
+
+const context = await snap.request({
+  method: "snap_getInterfaceContext",
+  params: {
+    id: interfaceId,
+  },
+})
+
+console.log(context)
+/*
+{
+  "key": "value"
+}
+*/
+```
+
+### `snap_resolveInterface`
+
+Resolves an interactive interface.
+For use in [custom dialogs](../features/custom-ui/dialogs.md#display-a-custom-dialog).
+
+#### Parameters
+
+An object containing:
+
+- `id` - The ID of the interface to be resolved.
+- `result` - The result to return to the interface's caller.
+
+#### Example
+
+For a full example of how to use `snap_resolveInterface`, see the [custom dialogs](../features/custom-ui/dialogs.md#display-a-custom-dialog) documentation.
 
 ### `snap_updateInterface`
 
@@ -978,6 +1130,7 @@ An object containing:
 - `id` - The ID of the interface to be updated, usually received in the
   [`onUserInput`](./entry-points.md#onuserinput) entry point.
 - `ui` - The [custom UI](../features/custom-ui/index.md) to create.
+- `context` - (Optional) A custom context object that will be passed to [`onUserInput`](./entry-points.md#onuserinput) when the user interacts with the interface. Passing this parameter will update the context object for the interface. 
 
 #### Example
 
@@ -989,9 +1142,12 @@ export function onUserInput({ id, event }) {
     method: "snap_updateInterface",
     params: {
       id,
-      ui: panel([
-        heading("New interface"),
-      ]),
+      ui: (
+        <Box>
+          <Heading>New interface</Heading>
+          <Text>This interface has been updated</Text>
+        </Box>
+      )
     },
   });
 };

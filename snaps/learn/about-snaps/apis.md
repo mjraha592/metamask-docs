@@ -7,7 +7,7 @@ sidebar_label: Snaps APIs
 # About the Snaps APIs
 
 Snaps, dapps, and MetaMask can communicate with each other using the [Snaps API](#snaps-api),
-[MetaMask JSON-RPC API](#metamask-json-rpc-api), and [custom JSON-RPC APIs](#custom-json-rpc-apis).
+[Wallet API](#wallet-api), and [custom JSON-RPC APIs](#custom-json-rpc-apis).
 
 ## Snaps API
 
@@ -35,7 +35,7 @@ await snap.request({
     type: "inApp",
     message: "Hello, world!",
   },
-});
+})
 ```
 
 ## Wallet API
@@ -66,20 +66,20 @@ await window.ethereum.request({
   params: {
     "npm:hello-snap": {},
   },
-});
+})
 
 // Call the "hello" method of the Snap using wallet_snap.
 const response = await window.ethereum.request({
   method: "wallet_snap",
   params: {
     snapId: "npm:hello-snap",
-    request: { 
+    request: {
       method: "hello",
     },
   },
-});
+})
 
-console.log(response); // "world!"
+console.log(response) // "world!"
 ```
 
 ### Snap requests
@@ -89,7 +89,7 @@ Snaps can also call some Wallet JSON-RPC API methods using the `ethereum` global
 
 To expose `ethereum` to the Snap execution environment, a Snap must first request the
 [`endowment:ethereum-provider`](../../reference/permissions.md#endowmentethereum-provider) permission.
-For example, to call [`eth_requestAccounts`](/wallet/reference/eth_requestaccounts), first request
+For example, to call [`eth_requestAccounts`](/wallet/reference/json-rpc-methods/eth_requestaccounts), first request
 the required permission:
 
 ```json title="snap.manifest.json"
@@ -101,26 +101,23 @@ the required permission:
 Your Snap can then call `eth_requestAccounts` in its source code:
 
 ```typescript title="index.ts"
-await ethereum.request({ "method": "eth_requestAccounts" });
+await ethereum.request({ method: "eth_requestAccounts" })
 ```
 
 The `ethereum` global available to Snaps has fewer capabilities than `window.ethereum` for dapps.
 Snaps can only use it to make read requests, not to write to the blockchain or initiate transactions.
 Snaps can call all Wallet JSON-RPC API methods **except** the following:
 
-- [`wallet_requestSnaps`](../../reference/wallet-api-for-snaps.md#wallet_requestsnaps)
-- [`wallet_requestPermissions`](/wallet/reference/wallet_requestPermissions)
-- [`wallet_revokePermissions`](/wallet/reference/wallet_revokePermissions)
-- [`wallet_addEthereumChain`](/wallet/reference/wallet_addEthereumChain)
-- [`wallet_switchEthereumChain`](/wallet/reference/wallet_switchEthereumChain)
-- [`wallet_watchAsset`](/wallet/reference/wallet_watchAsset)
-- [`wallet_registerOnboarding`](/wallet/reference/wallet_registerOnboarding)
-- [`wallet_scanQRCode`](/wallet/reference/wallet_scanQRCode)
-- [`eth_sendRawTransaction`](/wallet/reference/eth_sendRawTransaction)
-- [`eth_sendTransaction`](/wallet/reference/eth_sendTransaction)
-- [`eth_signTypedData_v4`](/wallet/reference/eth_signTypedData_v4)
-- [`eth_decrypt`](/wallet/reference/eth_decrypt)
-- [`eth_getEncryptionPublicKey`](/wallet/reference/eth_getEncryptionPublicKey)
+- [`wallet_requestPermissions`](/wallet/reference/json-rpc-methods/wallet_requestpermissions)
+- [`wallet_revokePermissions`](/wallet/reference/json-rpc-methods/wallet_revokepermissions)
+- [`wallet_addEthereumChain`](/wallet/reference/json-rpc-methods/wallet_addethereumchain)
+- [`wallet_switchEthereumChain`](/wallet/reference/json-rpc-methods/wallet_switchethereumchain)
+- [`wallet_watchAsset`](/wallet/reference/json-rpc-methods/wallet_watchasset)
+- [`wallet_registerOnboarding`](/wallet/reference/json-rpc-methods/wallet_registeronboarding)
+- [`wallet_scanQRCode`](/wallet/reference/json-rpc-methods/wallet_scanqrcode)
+- [`eth_sendTransaction`](/wallet/reference/json-rpc-methods/eth_sendtransaction)
+- [`eth_decrypt`](/wallet/reference/json-rpc-methods/eth_decrypt)
+- [`eth_getEncryptionPublicKey`](/wallet/reference/json-rpc-methods/eth_getencryptionpublickey)
 
 ## Custom JSON-RPC APIs
 
@@ -131,7 +128,7 @@ point and request the [`endowment:rpc`](../../reference/permissions.md#endowment
 The Snap's custom API is entirely up to you, as long as it's a valid
 [JSON-RPC](https://www.jsonrpc.org/specification) API.
 
-:::note Does my Snap need a custom API?
+:::note
 If your Snap can do something useful without receiving and responding to JSON-RPC requests, such as
 providing [transaction insights](../../reference/entry-points.md#ontransaction), you do not need to
 implement a custom API.
@@ -157,12 +154,12 @@ module.exports.onRpcRequest = async ({ origin, request }) => {
   switch (request.method) {
     // Expose a "hello" JSON-RPC method to dapps.
     case "hello":
-      return "world!";
+      return "world!"
 
     default:
-      throw new Error("Method not found.");
+      throw new Error("Method not found.")
   }
-};
+}
 ```
 
 A dapp can then install the Snap and call the exposed method:
@@ -176,7 +173,7 @@ await window.ethereum.request({
     // Assuming the Snap is published to npm using the package name "hello-snap".
     "npm:hello-snap": {},
   },
-});
+})
 
 // Invoke the "hello" JSON-RPC method exposed by the Snap.
 const response = await window.ethereum.request({
@@ -187,7 +184,7 @@ const response = await window.ethereum.request({
       method: "hello",
     },
   },
-});
+})
 
-console.log(response); // "world!"
+console.log(response) // "world!"
 ```

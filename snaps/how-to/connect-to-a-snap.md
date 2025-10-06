@@ -1,10 +1,10 @@
 ---
 description: Connect your dapp to existing, third-party Snaps.
-sidebar_position: 9
+sidebar_position: 10
 ---
 
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
 
 # Connect to a Snap
 
@@ -15,18 +15,18 @@ This is possible because Snaps can expose a [custom JSON-RPC API](../learn/about
 ## Detect wallet
 
 To connect to a Snap, dapps must first detect MetaMask in the user's browser.
-See the Wallet documentation on [how to connect to MetaMask](/wallet/how-to/connect).
+See the Wallet API documentation on [how to connect to the MetaMask extension](/wallet/how-to/connect-extension).
 
 ### Detect MetaMask Flask
 
 When developing your Snap, you might need to require
-[MetaMask Flask](../get-started/install-flask.md) in your dapp. 
+[MetaMask Flask](../get-started/install-flask.md) in your dapp.
 We recommend detecting MetaMask Flask using the
-[multi-wallet detection mechanism](/wallet/concepts/wallet-interoperability) specified by EIP-6963. 
+[multi-wallet detection mechanism](/wallet/concepts/wallet-interoperability) specified by EIP-6963.
 Alternatively, you can use the `window.ethereum` injected provider, but this might fail if the user
-is running multiple wallet extensions simultaneously. 
+is running multiple wallet extensions simultaneously.
 
-To detect MetaMask Flask, you can add the following to `window.onload`: 
+To detect MetaMask Flask, you can add the following to `window.onload`:
 
 <Tabs>
 <TabItem value="EIP-6963 example">
@@ -34,35 +34,35 @@ To detect MetaMask Flask, you can add the following to `window.onload`:
 ```js title="index.js"
 window.addEventListener("eip6963:announceProvider", (event) => {
   /* event.detail contains the discovered provider interface. */
-  const providerDetail = event.detail;
+  const providerDetail = event.detail
 
   /* providerDetail.info.rdns is the best way to distinguish a wallet extension. */
   if (providerDetail.info.rdns === "io.metamask.flask") {
-    console.log("MetaMask Flask successfully detected!");
+    console.log("MetaMask Flask successfully detected!")
     // Now you can use Snaps!
-  } else { 
-    console.error("Please install MetaMask Flask!");
+  } else {
+    console.error("Please install MetaMask Flask!")
   }
-});
+})
 
-window.dispatchEvent(new Event("eip6963:requestProvider"));
+window.dispatchEvent(new Event("eip6963:requestProvider"))
 ```
 
 </TabItem>
 <TabItem value="Injected provider example">
 
 ```js title="index.js"
-const provider = window.ethereum; 
+const provider = window.ethereum
 
-const isFlask = ( 
+const isFlask = (
   await provider?.request({ method: "web3_clientVersion" })
-)?.includes("flask"); 
+)?.includes("flask")
 
 if (provider && isFlask) {
-  console.log("MetaMask Flask successfully detected!");
+  console.log("MetaMask Flask successfully detected!")
   // Now you can use Snaps!
 } else {
-  console.error("Please install MetaMask Flask!", error);
+  console.error("Please install MetaMask Flask!", error)
 }
 ```
 
@@ -75,6 +75,11 @@ Connect to a Snap by calling the [`wallet_requestSnaps`](../reference/wallet-api
 method from your dapp.
 If a user doesn't have the Snap installed in their MetaMask wallet, MetaMask prompts the user to
 install the Snap.
+
+:::note
+A Snap can grant a dapp an [automatic connection](../how-to/allow-automatic-connections.md),
+skipping the need for users to confirm a connection.
+:::
 
 The following are different possible outcomes from calling `wallet_requestSnaps`.
 
@@ -110,13 +115,6 @@ with the following shape:
 If the Snap is already installed, the call to `wallet_requestSnaps` returns the same object as for a
 new installation of the Snap, but the user won't see a confirmation pop-up asking them to install the Snap.
 
-:::caution important
-Snaps are installed into the MetaMask instance of each user.
-If a Snap stores data, that data is specific to that user's MetaMask instance.
-However, that data can be shared with multiple dapps.
-Do not assume that data stored by a Snap is unique to your dapp. 
-:::
-
 ## Determine whether a Snap is installed
 
 Determine whether a Snap is installed by calling the
@@ -128,17 +126,17 @@ Each value is a nested object with additional information, such as the version o
 
 :::note
 `wallet_getSnaps` only returns the Snaps that are connected to your dapp.
-The user may have other Snaps installed that your dapp is not aware of. 
+The user may have other Snaps installed that your dapp is not aware of.
 :::
 
 The following example verifies whether a Snap with ID `npm:super-snap` is installed:
 
 ```ts title="index.ts"
 const snaps = await ethereum.request({
-    method: "wallet_getSnaps"
-});
+  method: "wallet_getSnaps",
+})
 
-const isMySnapInstalled = Object.keys(snaps).includes("npm:super-snap");
+const isMySnapInstalled = Object.keys(snaps).includes("npm:super-snap")
 ```
 
 If you need to work with a specific version of a Snap, you can instead iterate over

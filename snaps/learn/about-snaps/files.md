@@ -3,8 +3,8 @@ description: Learn about the Snap project files.
 sidebar_position: 2
 ---
 
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
 
 # Snaps files
 
@@ -65,8 +65,8 @@ The manifest file of `Hello World` would look something like this:
       }
     }
   },
-"initialPermissions": {},
-"manifestVersion": "0.1"
+  "initialPermissions": {},
+  "manifestVersion": "0.1"
 }
 ```
 
@@ -78,9 +78,9 @@ reproduce the `source.shasum` value), and what
 You might need to modify some manifest fields manually.
 For example, if you change the location of the icon SVG file, you must update
 `source.location.npm.iconPath` to match.
-You can also use the [Snaps CLI](../../reference/cli/subcommands.md) to update some fields for you.
-For example, running [`yarn mm-snap build`](../../reference/cli/subcommands.md#b-build) or
-[`yarn mm-snap manifest --fix`](../../reference/cli/subcommands.md#m-manifest) updates `source.shasum`.
+You can also use the [Snaps CLI](../../reference/cli.md) to update some fields for you.
+For example, running [`yarn mm-snap build`](../../reference/cli.md#b-build) or
+[`yarn mm-snap manifest --fix`](../../reference/cli.md#m-manifest) updates `source.shasum`.
 
 :::caution important
 Some manifest fields must match the corresponding fields of the `/snap/package.json` file.
@@ -105,7 +105,7 @@ expand to support different publishing solutions.
 The Snap configuration file, `snap.config.js` or `snap.config.ts`, must be placed in the project
 root directory.
 You can override the default values of the
-[Snaps configuration options](../../reference/cli/options.md) by specifying them in the
+[Snaps configuration options](../../reference/config-options.md) by specifying them in the
 configuration file.
 For example:
 
@@ -121,14 +121,14 @@ module.exports = {
   server: {
     port: 9000,
   },
-};
+}
 ```
 
 </TabItem>
 <TabItem value="TypeScript">
 
 ```typescript title="snap.config.ts"
-import type { SnapConfig } from "@metamask/snaps-cli";
+import type { SnapConfig } from "@metamask/snaps-cli"
 
 const config: SnapConfig = {
   input: "src/index.js",
@@ -138,9 +138,9 @@ const config: SnapConfig = {
   server: {
     port: 9000,
   },
-};
+}
 
-export default config;
+export default config
 ```
 
 </TabItem>
@@ -163,7 +163,7 @@ built-ins must be bundled along with the Snap.
 
 Running `yarn start` bundles your Snap for you.
 
-You can also run [`yarn mm-snap build`](../../reference/cli/subcommands.md#b-build) to bundle your
-Snap using [webpack](https://webpack.js.org/) or [Browserify](https://browserify.org).
+You can also run [`yarn mm-snap build`](../../reference/cli.md#b-build) to bundle your
+Snap using [webpack](https://webpack.js.org/).
 This command finds all dependencies using your specified main entry point and outputs a bundle
 file to your specified output path.

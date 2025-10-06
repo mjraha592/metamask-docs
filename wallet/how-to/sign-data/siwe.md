@@ -1,11 +1,10 @@
 ---
 description: Enable your users to sign in with Ethereum.
-sidebar_position: 2
 ---
 
 # Sign in with Ethereum
 
-You can set up [Sign-In with Ethereum (SIWE)](https://docs.login.xyz/) to enable users to easily
+You can set up [Sign-In with Ethereum (SIWE)](https://docs.siwe.xyz/) to enable users to easily
 sign in to your dapp by authenticating with their MetaMask wallet.
 
 MetaMask supports the SIWE standard message format as specified in [ERC-4361](https://eips.ethereum.org/EIPS/eip-4361).
@@ -14,7 +13,7 @@ MetaMask parses the message and gives the user a friendly interface prompting th
 your dapp:
 
 <p align="center">
-    <img src={require("../../assets/siwe.png").default} alt="Sign-in with Ethereum request" style={{border: '1px solid #DCDCDC'}} />
+    <img src={require("../../assets/siwe.png").default} alt="Sign-in with Ethereum request" class="appScreen" />
 </p>
 
 ## Domain binding
@@ -30,43 +29,43 @@ bypassing the warning and accepting the sign-in request.
 This is to not break existing dapps that may have use cases for mismatched domains.
 :::
 
-<div class="row">
-    <div class="column">
-        <img src={require("../../assets/siwe-bad-domain.png").default} alt="Sign-in bad domain" style={{border: '1px solid #DCDCDC'}} />
+<div class="imgRow">
+    <div class="imgCol">
+        <img src={require("../../assets/siwe-bad-domain.png").default} alt="Sign-in bad domain" class="appScreen" />
     </div>
-    <div class="column">
-        <img src={require("../../assets/siwe-bad-domain-2.png").default} alt="Sign-in bad domain pop-up" style={{border: '1px solid #DCDCDC'}} />
+    <div class="imgCol">
+        <img src={require("../../assets/siwe-bad-domain-2.png").default} alt="Sign-in bad domain pop-up" class="appScreen" />
     </div>
 </div>
 
 ## Example
 
 The following is an example of setting up SIWE with MetaMask using
-[`personal_sign`](/wallet/reference/personal_sign):
+[`personal_sign`](/wallet/reference/json-rpc-methods/personal_sign):
 
 ```javascript title="index.js"
 const siweSign = async (siweMessage) => {
   try {
-    const from = accounts[0];
-    const msg = `0x${Buffer.from(siweMessage, "utf8").toString("hex")}`;
+    const from = accounts[0]
+    const msg = `0x${Buffer.from(siweMessage, "utf8").toString("hex")}`
     const sign = await provider // Or window.ethereum if you don't support EIP-6963.
       .request({
         method: "personal_sign",
         params: [msg, from],
-      });
-    siweResult.innerHTML = sign;
+      })
+    siweResult.innerHTML = sign
   } catch (err) {
-    console.error(err);
-    siweResult.innerHTML = `Error: ${err.message}`;
+    console.error(err)
+    siweResult.innerHTML = `Error: ${err.message}`
   }
-};
+}
 
 siwe.onclick = async () => {
-  const domain = window.location.host;
-  const from = accounts[0];
-  const siweMessage = `${domain} wants you to sign in with your Ethereum account:\n${from}\n\nI accept the MetaMask Terms of Service: https://community.metamask.io/tos\n\nURI: https://${domain}\nVersion: 1\nChain ID: 1\nNonce: 32891757\nIssued At: 2021-09-30T16:25:24.000Z`;
-  siweSign(siweMessage);
-};
+  const domain = window.location.host
+  const from = accounts[0]
+  const siweMessage = `${domain} wants you to sign in with your Ethereum account:\n${from}\n\nI accept the MetaMask Terms of Service: https://community.metamask.io/tos\n\nURI: https://${domain}\nVersion: 1\nChain ID: 1\nNonce: 32891757\nIssued At: 2021-09-30T16:25:24.000Z`
+  siweSign(siweMessage)
+}
 ```
 
 The following HTML displays the SIWE button:

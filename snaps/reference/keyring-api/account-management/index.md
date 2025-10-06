@@ -1,11 +1,9 @@
 ---
 sidebar_position: 1
-tags:
-  - Keyring API
 ---
 
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
 
 # Account Management API
 
@@ -113,8 +111,16 @@ null
 
 ### `keyring_exportAccount`
 
-Exports the private key of an account managed by the Snap.
-A Snap might choose to not support this method.
+Exports account data managed by the Snap.
+This might include the public key, address, or derivation path.
+The exact data exported depends on the Snap's implementation and security considerations.
+A Snap might choose to not support this method or limit the data it exports.
+
+:::warning
+
+This method can export private keys or any other sensitive data.
+
+:::
 
 #### Parameters
 
@@ -124,9 +130,7 @@ An object containing:
 
 #### Returns
 
-An object containing:
-
-- `privateKey`: `string` - The account's private key.
+An object containing the account data.
 
 #### Example
 
@@ -183,12 +187,7 @@ An object containing:
   "method": "keyring_filterAccountChains",
   "params": {
     "id": "091bbc2e-6625-44d0-ac5c-658670ca649a",
-    "chains": [
-      "eip155:W", 
-      "eip155:X",
-      "eip155:Y",
-      "eip155:Z"
-    ]
+    "chains": ["eip155:W", "eip155:X", "eip155:Y", "eip155:Z"]
   }
 }
 ```
@@ -198,10 +197,7 @@ An object containing:
 
 ```json
 {
-  "chains": [
-    "eip155:X",
-    "eip155:Y"
-  ]
+  "chains": ["eip155:X", "eip155:Y"]
 }
 ```
 
@@ -279,7 +275,7 @@ An array of [account objects](objects.md#keyringaccount) handled by the Snap.
 
 ```json
 {
-    "method": "keyring_listAccounts"
+  "method": "keyring_listAccounts"
 }
 ```
 
@@ -478,7 +474,7 @@ An array of pending [request objects](objects.md#keyringrequest).
 
 ```json
 {
-    "method": "keyring_listRequests"
+  "method": "keyring_listRequests"
 }
 ```
 

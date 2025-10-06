@@ -5,8 +5,8 @@ sidebar_position: 1
 
 # About Snaps
 
-MetaMask Snaps is an open source system that allows anyone to safely extend the functionality of
-MetaMask, creating new web3 end user experiences.
+MetaMask Snaps is an open source system that allows anyone to safely create a mini app that runs inside the MetaMask extension,
+enabling new web3 end user experiences.
 For example, a Snap can add support for different blockchain networks, add custom account types, or
 provide additional functionality using its own APIs.
 This allows MetaMask to be used with a far more diverse set of protocols, dapps, and services.
@@ -45,11 +45,12 @@ of MetaMask core unless given permission to do so.
 ### APIs
 
 A Snap can communicate with MetaMask using the [Snaps API](../../reference/snaps-api.md) and some
-[MetaMask JSON-RPC API](/wallet/reference/json-rpc-api) methods.
+[MetaMask JSON-RPC API](/wallet/reference/json-rpc-methods) methods.
 The Snaps API allows Snaps to extend or modify the functionality of MetaMask, and communicate with
 other Snaps.
 
-Dapps can also use certain MetaMask JSON-RPC API methods to install and communicate with Snaps.
+Dapps can use the [Wallet API for Snaps](../../reference/wallet-api-for-snaps.md) to install and
+communicate with Snaps.
 
 A Snap can implement its own custom JSON-RPC API to communicate with dapps and other Snaps.
 
@@ -65,12 +66,19 @@ For each Snap, the user can:
 - See its execution status (running, stopped, or crashed).
 - Enable and disable the Snap.
 
-Other than the settings page, a Snap can [modify the MetaMask UI](../../features/custom-ui/index.md) only
-by [displaying a dialog](../../reference/snaps-api.md#snap_dialog) or
-[displaying transaction insights](../../reference/entry-points.md#ontransaction).
+A Snap can also display a [home page](../../features/custom-ui/home-pages.md) within MetaMask that
+the user can access using the Snaps menu.
 
-This means that most Snaps must rely on companion dapps and their custom JSON-RPC API methods to
-present their data to the user.
+Other than the settings page and home page, a Snap can modify the MetaMask UI by displaying
+[custom UI](../../features/custom-ui/index.md) in
+[dialogs](../../features/custom-ui/dialogs.md),
+[transaction insights](../../features/transaction-insights.md),
+[signature insights](../../features/signature-insights.md), and
+[notifications (expanded view)](../../features/notifications.md#expanded-view).
+An [account management Snap](../../features/custom-evm-accounts/index.md) can also modify the MetaMask UI by leveraging native account UX.
+
+Many Snaps must use companion dapps and custom JSON-RPC API methods to
+present data to the user.
 
 :::note
 Providing more ways for Snaps to modify the MetaMask UI is an important goal of the Snaps system,

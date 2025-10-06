@@ -1,60 +1,101 @@
-import React from "react";
-import clsx from "clsx";
-import Link from "@docusaurus/Link";
-import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
-import Layout from "@theme/Layout";
-import WalletSection from "@site/src/components/WalletSection";
-import SnapsSection from "@site/src/components/SnapsSection";
-import styles from "./index.module.css";
-
-function HomepageHeader() {
-  const { siteConfig } = useDocusaurusContext();
-  return (
-    <header className={clsx(styles.introductionBlock, "margin-bottom--lg")}>
-      <div className="container">
-        <h1 className={clsx("hero__title", styles.title, styles.forceColor)}>
-          {siteConfig.title}
-        </h1>
-        <p className={clsx("hero__subtitle", styles.subtitle, styles.forceColor)}>
-          Integrate with and extend upon the world&apos;s leading self-custodial crypto wallet.
-        </p>
-        <Link className={clsx(styles.homepageButton, "button button--lg")} to="/wallet">
-          Get started
-        </Link>
-      </div>
-    </header>
-  );
-}
-
-function DevBanner() {
-  return (
-    <header className={clsx(styles.devBannerBlock)}>
-      <div className="container">
-        <h1 className={clsx("hero__title", styles.devBannerTitle, styles.devBannerForceColor)}>
-          {"Contribute to MetaMask"}
-        </h1>
-        <p className={clsx("hero__subtitle", styles.devBannerSubtitle, styles.devBannerForceColor)}>
-          Join the MetaMask developer community and learn how to contribute to the MetaMask project itself.
-        </p>
-        <Link className={clsx(styles.devBannerButton, "button button--outline button--secondary button--md")} href="https://github.com/MetaMask/metamask-extension/blob/develop/docs/README.md">
-          Contribute&nbsp;
-          <svg width="13.5" height="13.5" aria-hidden="true" viewBox="0 0 24 24" className="iconExternalLink_node_modules-@docusaurus-theme-classic-lib-theme-Icon-ExternalLink-styles-module"><path fill="currentColor" d="M21 13v10h-21v-19h12v2h-10v15h17v-8h2zm3-12h-10.988l4.035 4-6.977 7.07 2.828 2.828 6.977-7.07 4.125 4.172v-11z"></path></svg>
-        </Link>
-      </div>
-    </header>
-  );
-}
+import Layout from '@theme/Layout'
+import Hero from '@site/src/components/Hero/Hero'
+import CardSection from '@site/src/components/CardSection'
+import CallToAction from '@site/src/components/CallToAction/CallToAction'
+import SectionIntro from '@site/src/components/SectionIntro/SectionIntro'
+import SEO from '@site/src/components/SEO'
+import useDocusaurusContext from '@docusaurus/useDocusaurusContext'
 
 export default function Home(): JSX.Element {
+  const { siteConfig } = useDocusaurusContext()
+
   return (
-    <Layout
-      title={"Home"}>
-      <HomepageHeader />
-      <main>
-        <WalletSection />
-        <SnapsSection />
-        <DevBanner />
-      </main>
+    <Layout title="Home">
+      <SEO
+        description="Build with the world's leading self-custodial crypto wallet. MetaMask developer documentation - SDK, Wallet API, Snaps, Embedded Wallets, Smart Accounts."
+        title="MetaMask Developer Documentation - Build Web3 Apps"
+        keywords={['metamask', 'web3 development', 'dapp development', 'embedded wallets', 'metamask quickstart', 'blockchain development', 'ethereum development', 'metamask sdk', 'web3 documentation', 'crypto wallet', 'defi development', 'nft development']}
+        slug="/"
+      />
+      <Hero
+        title={siteConfig.title}
+        description="Build with the world's leading self-custodial crypto wallet."
+      />
+
+      <SectionIntro description="Get started with the following resources:" />
+
+      <CardSection
+        colorPalette="purple"
+        cards={[
+          {
+            title: 'Quickstart',
+            description: 'Choose a quickstart guide that matches your project goals.',
+            href: '/quickstart',
+            buttonIcon: 'arrow-right',
+          },
+          {
+            title: 'Tutorials',
+            description:
+              'Explore use cases and follow the hands-on tutorials to build end-to-end dapps.',
+            href: '/tutorials/',
+            buttonIcon: 'arrow-right',
+          },
+        ]}
+      />
+
+      <SectionIntro description="What do you want to do with MetaMask?" />
+
+      <CardSection
+        colorPalette="blue"
+        cards={[
+          {
+            title: 'Connect to MetaMask',
+            description:
+              'Connect your dapp to the MetaMask browser extension and mobile app. Ideal for users who want full control over their keys and transactions.',
+            href: '/sdk',
+            buttonIcon: 'arrow-right',
+          },
+          {
+            title: 'Create embedded wallets',
+            description:
+              'Onboard power users and first-time users in seconds via social logins, passkeys, or by integrating your own authentication providers.',
+            href: '/embedded-wallets',
+            buttonIcon: 'arrow-right',
+          },
+          {
+            title: 'Create smart accounts',
+            description:
+              'Integrate MetaMask Smart Accounts into your dapp. Create smart wallets that support delegated permissions, gas abstraction, and secure execution.',
+            href: '/delegation-toolkit',
+            buttonIcon: 'arrow-right',
+          },
+          {
+            title: 'Build and scale your dapp',
+            description:
+              'Use high performance APIs provided by MetaMask and Infura to build and scale your dapp or Snap.',
+            href: '/services',
+            buttonIcon: 'arrow-right',
+          },
+          {
+            title: 'Extend MetaMask',
+            description:
+              'Create a custom mini app that runs inside the MetaMask extension. Add support for custom networks, accounts types, and APIs.',
+            href: '/snaps',
+            buttonIcon: 'arrow-right',
+          },
+        ]}
+      />
+
+      <CallToAction
+        title="Contribute to MetaMask on GitHub"
+        description="Join the MetaMask developer community and learn how to contribute to the MetaMask project itself."
+        button={{
+          label: 'Contribute',
+          href: 'https://github.com/metamask',
+          icon: 'github',
+          external: true,
+        }}
+      />
     </Layout>
-  );
+  )
 }

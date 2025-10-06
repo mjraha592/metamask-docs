@@ -1,431 +1,421 @@
 // @ts-check
 // Note: type annotations allow type checking and IDEs autocompletion
 
-const codeTheme = require("prism-react-renderer/themes/dracula");
-const remarkCodesandbox = require("remark-codesandbox");
-const isProd = process.env.NODE_ENV === "production";
+import fs from 'fs'
+require('dotenv').config()
+const { themes } = require('prism-react-renderer')
+const { REF_ALLOW_LOGIN_PATH } = require('./src/lib/constants')
+const {
+  fetchAndGenerateDynamicSidebarItems,
+  NETWORK_NAMES,
+  MM_REF_PATH,
+  MM_RPC_URL,
+} = require('./src/plugins/plugin-json-rpc')
+const codeTheme = themes.dracula
+const productsDropdown = fs.readFileSync('./src/components/NavDropdown/Products.html', 'utf-8')
+const baseUrl = process.env.DEST || '/'
+const siteUrl = 'https://docs.metamask.io'
 
+const remarkPlugins = [
+  require('remark-math'),
+  [require('@docusaurus/remark-plugin-npm2yarn'), { sync: true }]
+]
+
+const rehypePlugins = [[require('rehype-katex'), { strict: false }]]
 /** @type {import('@docusaurus/types').Config} */
+const fullUrl = new URL(baseUrl, siteUrl).toString()
 const config = {
-  title: "MetaMask developer documentation",
+  title: 'MetaMask developer documentation',
   // tagline: '',
-  url: "https://docs.metamask.io",
-  baseUrl: process.env.DEST || "/", // overwritten in github action for staging / latest
-  onBrokenLinks: "throw",
-  onBrokenMarkdownLinks: "warn",
-  favicon: "img/metamask-fox.svg",
+  url: 'https://docs.metamask.io',
+  baseUrl, // overwritten in github action for staging / latest
+  onBrokenLinks: 'warn',
+  onBrokenMarkdownLinks: 'warn',
+  favicon: 'img/favicons/favicon-96x96.png',
+
+  headTags: [
+    {
+      tagName: 'link',
+      attributes: {
+        rel: 'icon',
+        type: 'image/png',
+        sizes: '96x96',
+        href: 'img/favicons/favicon-96x96.png',
+      },
+    },
+    {
+      tagName: 'link',
+      attributes: {
+        rel: 'icon',
+        type: 'image/png',
+        sizes: '192x192',
+        href: 'img/favicons/web-app-manifest-192x192.png',
+      },
+    },
+    {
+      tagName: 'link',
+      attributes: {
+        rel: 'icon',
+        type: 'image/png',
+        sizes: '512x512',
+        href: 'img/favicons/web-app-manifest-512x512.png',
+      },
+    },
+    {
+      tagName: 'link',
+      attributes: {
+        rel: 'apple-touch-icon',
+        sizes: '180x180',
+        href: 'img/favicons/apple-touch-icon.png',
+      },
+    },
+    {
+      tagName: 'script',
+      attributes: {
+        type: 'application/ld+json',
+      },
+      innerHTML: `
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "url": "${fullUrl}",
+      "logo": "${new URL('img/favicons/favicon-96x96.png', fullUrl).toString()}"
+    }
+  `,
+    },
+  ],
 
   // GitHub pages deployment config.
   // If you aren't using GitHub pages, you don't need these.
-  organizationName: "metamask", // Usually your GitHub org/user name.
-  projectName: "metamask-docs", // Usually your repo name.
+  organizationName: 'metamask', // Usually your GitHub org/user name.
+  projectName: 'metamask-docs', // Usually your repo name.
 
   // Even if you don't use internalization, you can use this field to set useful
   // metadata like html lang. For example, if your site is Chinese, you may want
   // to replace "en" with "zh-Hans".
   i18n: {
-    defaultLocale: "en",
-    locales: ["en"/*, "ru", "zh"*/],
+    defaultLocale: 'en',
+    locales: ['en' /*, "zh", "ko"*/],
+  },
+
+  customFields: {
+    LD_CLIENT_ID: process.env.LD_CLIENT_ID,
+    VERCEL_ENV: process.env.VERCEL_ENV,
+    DASHBOARD_URL: process.env.DASHBOARD_URL || 'http://localhost:3000',
+    SENTRY_KEY: process.env.SENTRY_KEY,
+    LINEA_ENS_URL: process.env.LINEA_ENS_URL,
+    SEGMENT_ANALYTICS_KEY: process.env.SEGMENT_ANALYTICS_KEY,
   },
 
   trailingSlash: true,
 
   scripts: [
-    { src: "https://cmp.osano.com/AzZMxHTbQDOQD8c1J/a2e89f0e-f467-4542-bfea-30ea2c1a6648/osano.js" },
-    { src: "https://plausible.io/js/script.js", defer: true, "data-domain": "docs.metamask.io" },
-    { src: "/js/feedback-script.js", defer: true, async: true },
-    { src: "/js/getfeedback.js", defer: true, async: true },
+    {
+      src: baseUrl + 'js/fix-trailing-slash.js',
+      async: false,
+      defer: false,
+    },
+    {
+      src: baseUrl + 'js/code-focus.js',
+      async: false,
+      defer: true,
+    },
+    {
+      src: 'https://cmp.osano.com/AzZMxHTbQDOQD8c1J/84e64bce-4a70-4dcc-85cb-7958f22b2371/osano.js',
+    },
   ],
 
   markdown: {
     mermaid: true,
   },
-  themes: ["@docusaurus/theme-mermaid"],
+  themes: ['@docusaurus/theme-mermaid'],
 
   presets: [
     [
-      "@metamask/docusaurus-openrpc/dist/preset",
-      /** @type {import('@metamask/docusaurus-openrpc/dist/preset').Options} */
-      ({
+      'classic',
+      {
         docs: {
-          path: "wallet",
-          routeBasePath: "wallet",
-          sidebarPath: require.resolve("./wallet-sidebar.js"),
+          id: 'docs',
+          path: 'docs',
+          routeBasePath: '/',
+          editUrl: 'https://github.com/MetaMask/metamask-docs/edit/main/',
+          sidebarPath: false,
           breadcrumbs: false,
-          editUrl: "https://github.com/MetaMask/metamask-docs/edit/main/",
-          remarkPlugins: [
-            require("remark-docusaurus-tabs"),
-            [remarkCodesandbox, {
-              mode: "iframe",
-              autoDeploy: process.env.NODE_ENV === "production",
-            }],
+          remarkPlugins,
+          rehypePlugins,
+        },
+        pages: {
+          path: 'src/pages',
+          routeBasePath: '/',
+          include: ['**/**.{js,jsx,ts,tsx,md,mdx}'],
+          exclude: [
+            '**/_*.{js,jsx,ts,tsx,md,mdx}',
+            '**/_*/**',
+            '**/*.test.{js,jsx,ts,tsx}',
+            '**/__tests__/**',
           ],
-          openrpc: {
-            openrpcDocument: "https://metamask.github.io/api-specs/0.8.4/openrpc.json",
-            path: "reference",
-            sidebarLabel: "JSON-RPC API",
-          },
+          mdxPageComponent: '@theme/MDXPage',
+          remarkPlugins,
+          rehypePlugins,
         },
         theme: {
-          customCss: require.resolve("./src/css/custom.css"),
+          customCss: require.resolve('./src/scss/custom.scss'),
         },
-      }),
+      },
     ],
   ],
   plugins: [
+    ['./src/plugins/docusaurus-plugin-virtual-files', { rootDir: '.integrationBuilderCache' }],
+    './src/plugins/docusaurus-plugin-tutorials',
+    'docusaurus-plugin-sass',
+    './src/plugins/mm-scss-utils',
     [
-      "@docusaurus/plugin-content-docs",
-      ({
-        id: "snaps",
-        path: "snaps",
-        routeBasePath: "snaps",
-        editUrl: "https://github.com/MetaMask/metamask-docs/edit/main/",
-        sidebarPath: require.resolve("./snaps-sidebar.js"),
+      '@docusaurus/plugin-content-docs',
+      {
+        id: 'snaps',
+        path: 'snaps',
+        routeBasePath: 'snaps',
+        editUrl: 'https://github.com/MetaMask/metamask-docs/edit/main/',
+        sidebarPath: require.resolve('./snaps-sidebar.js'),
         breadcrumbs: false,
-        remarkPlugins: [
-          require("remark-docusaurus-tabs"),
-        ],
+        remarkPlugins,
+        rehypePlugins,
         admonitions: {
-          tag: ":::",
           keywords: [
-            "info",
-            "success",
-            "danger",
-            "note",
-            "tip",
-            "warning",
-            "important",
-            "caution",
-            "security",
-            "flaskOnly",
+            'info',
+            'success',
+            'danger',
+            'note',
+            'tip',
+            'warning',
+            'important',
+            'caution',
+            'security',
+            'flaskOnly',
           ],
         },
-      }),
-    ],
-    [
-      "@docusaurus/plugin-content-docs",
-      {
-        id: "services",
-        path: "services",
-        routeBasePath: "services",
-        editUrl: "https://github.com/MetaMask/metamask-docs/edit/main/",
-        sidebarPath: require.resolve("./services-sidebar.js"),
-        breadcrumbs: false,
       },
     ],
     [
-      "@docusaurus/plugin-content-docs",
+      '@docusaurus/plugin-content-docs',
       {
-        id: "docs",
-        path: "docs",
-        routeBasePath: "/",
-        editUrl: "https://github.com/MetaMask/metamask-docs/edit/main/",
-        sidebarPath: false,
+        id: 'gator',
+        path: 'delegation-toolkit',
+        routeBasePath: 'delegation-toolkit',
+        editUrl: 'https://github.com/MetaMask/metamask-docs/edit/main/',
+        sidebarPath: require.resolve('./gator-sidebar.js'),
         breadcrumbs: false,
-      },
-    ],
-    [
-      "@docusaurus/plugin-client-redirects",
-      {
-        fromExtensions: ["html", "htm"],
-        // These redirects are (mostly) organized in the same order as the sidebar.
-        redirects: [
-          {
-            from: ["/guide", "/guide/common-terms", "/guide/contributors", "/wallet/how-to/get-started-building", "/wallet/how-to/set-up-dev-environment", "/guide/create-dapp", "/guide/getting-started", "/wallet/category/get-started", "/wallet/get-started/set-up-dev-environment", "/wallet/how-to/get-started-building/set-up-dev-environment"],
-            to: "/wallet",
+        remarkPlugins,
+        rehypePlugins,
+        sidebarCollapsed: false,
+        includeCurrentVersion: true,
+        // Set to the latest release.
+        lastVersion: '0.13.0',
+        versions: {
+          // Defaults to the ./docs folder.
+          // Using "development" instead of "next" as path.
+          current: {
+            label: 'development',
+            path: 'development',
           },
-          {
-            from: "/wallet/category/how-to",
-            to: "/wallet/how-to",
+          // The latest release.
+          '0.13.0': {
+            label: 'latest (0.13.0)',
           },
-          {
-            from: ["/wallet/quickstart/javascript", "/wallet/quickstart/react", "/wallet/quickstart/other-platforms", "/wallet/how-to/discover-multiple-wallets", "/wallet/how-to/detect-wallet", "/wallet/how-to/detect-wallet/multiple-wallets", "/guide/metamask-extension-provider", "/wallet/how-to/access-provider"],
-            to: "/wallet/how-to/connect",
-          },
-          {
-            from: ["/wallet/get-started/detect-metamask", "/wallet/how-to/detect-metamask", "/wallet/how-to/detect-wallet/metamask"],
-            to: "/wallet/how-to/connect/detect-metamask",
-          },
-          {
-            from: ["/guide/accessing-accounts", "/wallet/how-to/access-accounts", "/wallet/get-started/access-accounts"],
-            to: "/wallet/how-to/connect/access-accounts",
-          },
-          {
-            from: ["/wallet/get-started/detect-network", "/wallet/how-to/connect/detect-network", "/wallet/how-to/detect-network"],
-            to: "/wallet/how-to/manage-networks/detect-network",
-          },
-          {
-            from: "/wallet/how-to/add-network",
-            to: "/wallet/how-to/manage-networks/add-network",
-          },
-          {
-            from: "/guide/sending-transactions",
-            to: "/wallet/how-to/send-transactions",
-          },
-          {
-            from: "/guide/signing-data",
-            to: "/wallet/how-to/sign-data",
-          },
-          {
-            from: "/wallet/how-to/use-siwe",
-            to: "/wallet/how-to/sign-data/siwe",
-          },
-          {
-            from: ["/guide/registering-your-token", "/wallet/how-to/register-token"],
-            to: "/wallet/how-to/display/tokens",
-          },
-          {
-            from: ["/guide/registering-function-names", "/wallet/how-to/register-method-names"],
-            to: "/wallet/how-to/display/method-names",
-          },
-          {
-            from: ["/guide/defining-your-icon", "/wallet/how-to/set-icon"],
-            to: "/wallet/how-to/display/icon",
-          },
-          {
-            from: "/wallet/how-to/request-permissions",
-            to: "/wallet/how-to/manage-permissions",
-          },
-          {
-            from: ["/guide/mobile-getting-started", "/guide/site-compatibility-checklist", "/guide/mobile-best-practices", "/wallet/how-to/use-mobile", "/wallet/how-to/integrate-with-mobile", "/sdk"],
-            to: "/wallet/how-to/use-sdk",
-          },
-          {
-            from: "/wallet/how-to/sign-data/connect-and-sign",
-            to: "/wallet/how-to/use-sdk/javascript/connect-and-sign",
-          },
-          {
-            from: ["/wallet/how-to/use-3rd-party-integrations/js-infura-api", "/wallet/how-to/make-read-only-requests"],
-            to: "/wallet/how-to/use-sdk/javascript/make-read-only-requests",
-          },
-          {
-            from: "/wallet/how-to/batch-json-rpc-requests",
-            to: "/wallet/how-to/use-sdk/javascript/batch-json-rpc-requests",
-          },
-          {
-            from: "/wallet/how-to/display/custom-modals",
-            to: "/wallet/how-to/use-sdk/javascript/display-custom-modals",
-          },
-          {
-            from: "/wallet/how-to/use-3rd-party-integrations/unity-dweb",
-            to: "/wallet/how-to/use-sdk/gaming/unity/dweb",
-          },
-          {
-            from: "/wallet/how-to/use-3rd-party-integrations/unity-infura",
-            to: "/wallet/how-to/use-sdk/gaming/unity/infura",
-          },
-          {
-            from: "/wallet/how-to/use-3rd-party-integrations",
-            to: "/wallet/how-to/use-sdk/3rd-party-libraries",
-          },
-          {
-            from: "/wallet/how-to/use-3rd-party-integrations/web3-onboard",
-            to: "/wallet/how-to/use-sdk/3rd-party-libraries/web3-onboard",
-          },
-          {
-            from: ["/guide/initializing-dapps", "/wallet/how-to/interact-with-smart-contracts"],
-            to: "/wallet/concepts/smart-contracts",
-          },
-          {
-            from: "/guide/ethereum-provider",
-            to: "/wallet/reference/provider-api",
-          },
-          {
-            from: ["/guide/onboarding-library", "/wallet/how-to/use-onboarding-library"],
-            to: "/wallet/how-to/onboard-users",
-          },
-          {
-            from: ["/wallet/get-started/run-development-network", "/wallet/how-to/get-started-building/run-devnet"],
-            to: "/wallet/how-to/run-devnet",
-          },
-          {
-            from: "/wallet/how-to/get-started-building/secure-dapp",
-            to: "/wallet/how-to/secure-dapp",
-          },
-          {
-            from: "/wallet/category/concepts",
-            to: "/wallet/concepts",
-          },
-          {
-            from: ["/guide/provider-migration", "/wallet/concepts/provider-api", "/wallet/concepts/rpc-api", "/wallet/how-to/migrate-api", "/wallet/concepts/apis"],
-            to: "/wallet/concepts/wallet-api",
-          },
-          {
-            from: "/wallet/category/tutorials",
-            to: "/wallet/tutorials",
-          },
-          {
-            from: "/wallet/tutorials/simple-react-dapp",
-            to: "/wallet/tutorials/react-dapp-local-state",
-          },
-          {
-            from: "/wallet/category/reference",
-            to: "/wallet/reference",
-          },
-          {
-            from: ["/guide/rpc-api", "/wallet/reference/rpc-api"],
-            to: "/wallet/reference/json-rpc-api",
-          },
-          {
-            from: "/guide/snaps",
-            to: "/snaps",
-          },
-          {
-            from: "/snaps/category/get-started",
-            to: "/snaps/get-started",
-          },
-          {
-            from: "/snaps/get-started/install-snaps",
-            to: "/snaps/get-started/install-flask",
-          },
-          {
-            from: ["/guide/snaps-concepts", "/snaps/category/concepts", "/snaps/concepts/lifecycle", "/snaps/concepts/user-interface", "/snaps/concepts/overview", "/snaps/concepts", "/snaps/concepts/apis", "/snaps/concepts/execution-environment"],
-            to: "/snaps/learn/about-snaps",
-          },
-          {
-            from: ["/snaps/concepts/anatomy", "/snaps/concepts/files"],
-            to: "/snaps/learn/about-snaps/files",
-          },
-          {
-            from: ["/snaps/category/tutorials", "/snaps/tutorials"],
-            to: "/snaps/learn/tutorials",
-          },
-          {
-            from: "/snaps/tutorials/gas-estimation",
-            to: "/snaps/learn/tutorials/gas-estimation",
-          },
-          {
-            from: "/snaps/tutorials/transaction-insights",
-            to: "/snaps/learn/tutorials/transaction-insights",
-          },
-          {
-            from: "/snaps/category/how-to",
-            to: "/snaps/how-to",
-          },
-          {
-            from: "/snaps/how-to/use-custom-ui",
-            to: "/snaps/features/custom-ui",
-          },
-          {
-            from: "/snaps/how-to/localize-a-snap",
-            to: "/snaps/features/localization",
-          },
-          {
-            from: "/snaps/how-to/manage-keys",
-            to: "/snaps/features/non-evm-networks",
-          },
-          {
-            from: "/snaps/concepts/keyring-api",
-            to: "/snaps/features/custom-evm-accounts",
-          },
-          {
-            from: "/snaps/tutorials/custom-evm-accounts",
-            to: "/snaps/features/custom-evm-accounts/create-account-snap",
-          },
-          {
-            from: ["/snaps/concepts/design-guidelines", "/snaps/how-to/design-a-snap"],
-            to: "/snaps/learn/best-practices/design-guidelines",
-          },
-          {
-            from: ["/snaps/concepts/security-guidelines", "/snaps/how-to/secure-a-snap"],
-            to: "/snaps/learn/best-practices/security-guidelines",
-          },
-          {
-            from: "/guide/snaps-permissions",
-            to: "/snaps/how-to/request-permissions",
-          },
-          {
-            from: ["/guide/snaps-patching-dependencies", "/snaps/how-to/troubleshoot"],
-            to: "/snaps/how-to/debug-a-snap/common-issues",
-          },
-          {
-            from: ["/guide/snaps-development-guide", "/snaps/how-to/develop-a-snap"],
-            to: "/snaps/how-to/publish-a-snap",
-          },
-          {
-            from: ["/snaps/how-to/work-with-existing-snaps", "/snaps/how-to/use-3rd-party-snaps"],
-            to: "/snaps/how-to/connect-to-a-snap",
-          },
-          {
-            from: "/snaps/category/reference",
-            to: "/snaps/reference",
-          },
-          {
-            from: ["/guide/snaps-rpc-api", "/snaps/reference/rpc-api"],
-            to: "/snaps/reference/snaps-api",
-          },
-          {
-            from: ["/guide/snaps-exports", "/snaps/reference/exports"],
-            to: "/snaps/reference/entry-points",
-          },
-        ].reduce((acc, item) => {
-          acc.push(item);
-          acc.push({ from: item.from + ".html", to: item.to });
-          return acc;
-        }, []),
-        createRedirects(existingPath) {
-          if (existingPath.includes("/use-sdk")) {
-            // Redirect from /connect/set-up-sdk/X to /use-sdk/X
-            return [
-              existingPath.replace("/use-sdk", "/connect/set-up-sdk"),
-            ];
-          }
-          if (existingPath.includes("/use-sdk/gaming/unity")) {
-            return [
-              existingPath.replace("/use-sdk/gaming/unity", "/interact-with-smart-contracts/unity"),
-            ];
-          }
-          if (existingPath.includes("/features/custom-evm-accounts")) {
-            return [
-              existingPath.replace("/features/custom-evm-accounts", "/how-to/use-keyring-api"),
-            ];
-          }
-          return undefined;
         },
       },
     ],
-    isProd ? 
-      [
-        "docusaurus-plugin-segment",
-        {
-          apiKey: process.env.SEGMENT_ANALYTICS_KEY,
-          load: { cookie: { sameSite: "None", secure: true } },
-          page: true,
+    [
+      '@docusaurus/plugin-content-docs',
+      {
+        id: 'services',
+        path: 'services',
+        routeBasePath: 'services',
+        editUrl: 'https://github.com/MetaMask/metamask-docs/edit/main/',
+        sidebarPath: require.resolve('./services-sidebar.js'),
+        breadcrumbs: false,
+        remarkPlugins,
+        rehypePlugins,
+      },
+    ],
+    [
+      '@docusaurus/plugin-content-docs',
+      {
+        id: 'dashboard',
+        path: 'developer-tools/dashboard',
+        routeBasePath: 'developer-tools/dashboard',
+        editUrl: 'https://github.com/MetaMask/metamask-docs/edit/main/',
+        sidebarPath: require.resolve('./dashboard-sidebar.js'),
+        breadcrumbs: false,
+        remarkPlugins,
+        rehypePlugins,
+      },
+    ],
+    [
+      '@docusaurus/plugin-content-docs',
+      {
+        id: 'wallet',
+        path: 'wallet',
+        routeBasePath: 'wallet',
+        editUrl: 'https://github.com/MetaMask/metamask-docs/edit/main/',
+        sidebarPath: require.resolve('./wallet-sidebar.js'),
+        breadcrumbs: false,
+        remarkPlugins,
+        rehypePlugins,
+        sidebarItemsGenerator: async function ({ defaultSidebarItemsGenerator, ...args }) {
+          const sidebarItems = await defaultSidebarItemsGenerator(args)
+          const dynamicItems = await fetchAndGenerateDynamicSidebarItems(
+            MM_RPC_URL,
+            MM_REF_PATH,
+            NETWORK_NAMES.metamask
+          )
+          if (args.item.dirName === 'reference/json-rpc-methods') {
+            return [...sidebarItems, ...dynamicItems]
+          }
+          return sidebarItems
         },
-      ] : null,
+      },
+    ],
+    [
+      '@docusaurus/plugin-content-docs',
+      {
+        id: 'sdk',
+        path: 'sdk',
+        routeBasePath: 'sdk',
+        editUrl: 'https://github.com/MetaMask/metamask-docs/edit/main/',
+        sidebarPath: require.resolve('./sdk-sidebar.js'),
+        breadcrumbs: false,
+        remarkPlugins,
+        rehypePlugins,
+      },
+    ],
+
+    [
+      '@docusaurus/plugin-content-docs',
+      {
+        id: 'embedded-wallets',
+        path: 'embedded-wallets',
+        routeBasePath: 'embedded-wallets',
+        editUrl: 'https://github.com/MetaMask/metamask-docs/edit/main/',
+        sidebarPath: require.resolve('./ew-sidebar.js'),
+        breadcrumbs: false,
+        remarkPlugins,
+        rehypePlugins,
+      },
+    ],
+    './src/plugins/plugin-json-rpc.ts',
+    // Custom Segment plugin for controlled analytics
+    './src/plugins/segment',
+    './src/plugins/launchdarkly',
+    './src/plugins/sentry',
+    [
+      '@docusaurus/plugin-google-tag-manager',
+      {
+        containerId: 'GTM-5FGPLC2Q',
+      },
+    ],
   ],
+  clientModules: [require.resolve('./src/client/scroll-fix.js')],
   themeConfig:
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
       metadata: [
-        { name: "og:image", content: "/img/metamaskog.jpeg" },
+        {
+          name: 'keywords',
+          content:
+            'MetaMask, Embedded Wallets, Quickstart, Web3 Development, SDK, Wallet Integration, API, Dapp Development, Blockchain Development, Ethereum Development, Smart Contract, Account Abstraction, Snaps, Crypto Wallet, DeFi, NFT, Infura, Services, Dashboard',
+        },
+        // Twitter-specific meta tags
+        {
+          name: 'twitter:card',
+          content: 'summary_large_image',
+        },
+        {
+          name: 'twitter:image',
+          content: 'https://docs.metamask.io/img/metamaskog.jpg',
+        },
+        {
+          name: 'twitter:image:alt',
+          content: 'MetaMask Developer Documentation',
+        },
+        {
+          name: 'twitter:site',
+          content: '@MetaMask',
+        },
+        {
+          name: 'twitter:creator',
+          content: '@MetaMask',
+        },
+        // Open Graph meta tags for better social sharing
+        {
+          property: 'og:image',
+          content: 'https://docs.metamask.io/img/metamaskog.jpg',
+        },
+        {
+          property: 'og:image:width',
+          content: '1200',
+        },
+        {
+          property: 'og:image:height',
+          content: '630',
+        },
+        {
+          property: 'og:image:alt',
+          content: 'MetaMask Developer Documentation',
+        },
+        {
+          property: 'og:type',
+          content: 'website',
+        },
       ],
+      image: '/img/metamaskog.jpg',
+      colorMode: {
+        respectPrefersColorScheme: true,
+      },
       navbar: {
-        title: " │ ‎ Documentation",
         logo: {
-          alt: "MetaMask logo",
-          src: "img/metamask-logo.svg",
-          srcDark: "img/metamask-logo-dark.svg",
+          alt: 'MetaMask logo',
+          src: 'img/metamask-logo.svg',
+          srcDark: 'img/metamask-logo-dark.svg',
           width: 150,
         },
+        hideOnScroll: false,
         items: [
           {
-            to: "wallet",
-            label: "Wallet",
+            type: 'dropdown',
+            label: 'Products',
+            items: [
+              {
+                type: 'html',
+                value: productsDropdown,
+              },
+            ],
           },
           {
-            to: "snaps",
-            label: "Snaps",
+            label: 'Quickstart',
+            to: '/quickstart',
+            position: 'left',
           },
           {
-            to: "services",
-            label: "Services",
+            label: 'Tutorials',
+            to: '/tutorials',
+            position: 'left',
           },
           {
-            to: "whats-new",
-            label: "What's new?",
-            position: "right",
+            to: 'developer-tools/faucet/',
+            label: 'Faucet',
+            position: 'right',
           },
+          {
+            to: 'https://community.metamask.io/',
+            label: 'Help ↗',
+            position: 'right',
+          },
+          // {
+          //   type: 'custom-navbarWallet',
+          //   position: 'right',
+          //   includeUrl: REF_ALLOW_LOGIN_PATH,
+          // },
           /* Language drop down
           {
             type: "localeDropdown",
@@ -441,90 +431,122 @@ const config = {
       },
       footer: {
         logo: {
-          alt: "MetaMask logo",
-          src: "img/metamask-logo.svg",
-          srcDark: "img/metamask-logo-dark.svg",
-          href: "https://metamask.io/",
+          alt: 'MetaMask logo',
+          src: 'img/metamask-logo.svg',
+          srcDark: 'img/metamask-logo-dark.svg',
+          href: 'https://metamask.io/',
           width: 250,
         },
         links: [
           {
-            title: "Documentation",
+            title: 'Documentation',
             items: [
               {
-                label: "Home",
-                to: "/",
+                label: 'SDK',
+                to: '/sdk',
               },
               {
-                label: "MetaMask wallet",
-                to: "/wallet",
+                label: 'Wallet API',
+                to: '/wallet',
               },
               {
-                label: "MetaMask SDK",
-                to: "/wallet/how-to/use-sdk",
+                label: 'Delegation Toolkit',
+                to: '/delegation-toolkit',
               },
               {
-                label: "Snaps",
-                to: "/snaps",
+                label: 'Embedded Wallets',
+                to: '/embedded-wallets',
               },
               {
-                label: "Services",
-                to: "/services",
+                label: 'Snaps',
+                to: '/snaps',
+              },
+              {
+                label: 'Services',
+                to: '/services',
+              },
+              {
+                label: 'Developer dashboard',
+                to: '/developer-tools/dashboard',
               },
             ],
           },
           {
-            title: "GitHub",
+            title: 'GitHub',
             items: [
               {
-                label: "Documentation GitHub",
-                href: "https://github.com/MetaMask/metamask-docs",
+                label: 'Documentation GitHub',
+                href: 'https://github.com/MetaMask/metamask-docs',
               },
               {
-                label: "MetaMask wallet GitHub",
-                href: "https://github.com/MetaMask/metamask-extension/",
+                label: 'MetaMask extension GitHub',
+                href: 'https://github.com/MetaMask/metamask-extension/',
               },
               {
-                label: "MetaMask SDK GitHub",
-                href: "https://github.com/MetaMask/metamask-sdk/",
+                label: 'MetaMask SDK GitHub',
+                href: 'https://github.com/MetaMask/metamask-sdk/',
               },
               {
-                label: "Snaps GitHub",
-                href: "https://github.com/MetaMask/snaps-monorepo",
+                label: 'Delegation Toolkit GitHub',
+                href: 'https://github.com/MetaMask/delegation-toolkit',
+              },
+              {
+                label: 'MetaMask mobile GitHub',
+                href: 'https://github.com/MetaMask/metamask-mobile',
+              },
+              {
+                label: 'Snaps GitHub',
+                href: 'https://github.com/MetaMask/snaps-monorepo',
               },
             ],
           },
           {
-            title: "Community",
+            title: 'Community',
             items: [
               {
-                label: "Consensys Discord",
-                href: "https://discord.gg/consensys",
+                label: 'Faucet',
+                to: '/developer-tools/faucet',
               },
               {
-                label: "Contribute to MetaMask",
-                href: "https://github.com/MetaMask/metamask-extension/blob/develop/docs/README.md",
+                label: 'MetaMask Developer',
+                href: 'https://developer.metamask.io/login',
               },
               {
-                label: "Contribute to the docs",
-                href: "https://github.com/MetaMask/metamask-docs/blob/main/CONTRIBUTING.md",
+                label: 'Consensys Discord',
+                href: 'https://discord.gg/consensys',
+              },
+              {
+                label: 'Contribute to MetaMask',
+                href: 'https://github.com/MetaMask/metamask-extension/blob/develop/docs/README.md',
+              },
+              {
+                label: 'Contribute to the docs',
+                href: 'https://github.com/MetaMask/metamask-docs/blob/main/CONTRIBUTING.md',
+              },
+              {
+                label: 'MetaMask user support',
+                href: 'https://support.metamask.io/',
               },
             ],
           },
           {
-            title: "Legal",
+            title: 'Legal',
             items: [
               {
-                label: "Privacy Policy",
-                href: "https://consensys.net/privacy-policy/",
+                label: 'Privacy Policy',
+                href: 'https://consensys.net/privacy-policy/',
               },
               {
-                label: "Terms of Use",
-                href: "https://consensys.net/terms-of-use/",
+                label: 'Terms of Use',
+                href: 'https://consensys.net/terms-of-use/',
               },
               {
-                label: "Contributor License Agreement",
-                href: "https://metamask.io/cla/",
+                label: 'Contributor License Agreement',
+                href: 'https://metamask.io/cla/',
+              },
+              {
+                label: 'Accessibility',
+                href: 'https://consensys.io/accessibility',
               },
               {
                 html: "<button id='manage-cookie-btn'>Manage cookies</button>",
@@ -536,16 +558,43 @@ const config = {
       },
       prism: {
         theme: codeTheme,
-        additionalLanguages: ["csharp","swift","gradle","kotlin"],
+        additionalLanguages: ['csharp', 'gradle', 'bash', 'json', 'java', 'kotlin', 'swift', 'groovy', 'dart'],
+        magicComments: [
+          {
+            className: 'theme-code-block-highlighted-line',
+            line: 'highlight-next-line',
+            block: { start: 'highlight-start', end: 'highlight-end' },
+          },
+          {
+            className: 'code-unfocus',
+            line: 'unfocus-next-line',
+            block: { start: 'unfocus-start', end: 'unfocus-end' },
+          },
+          {
+            className: 'code-focus',
+            line: 'focus-next-line',
+            block: { start: 'focus-start', end: 'focus-end' },
+          },
+          {
+            className: 'git-diff-remove',
+            line: 'remove-next-line',
+            block: { start: 'remove-start', end: 'remove-end' },
+          },
+          {
+            className: 'git-diff-add',
+            line: 'add-next-line',
+            block: { start: 'add-start', end: 'add-end' },
+          },
+        ],
       },
       algolia: {
         // The application ID provided by Algolia
-        appId: "AWX4QVM59R",
+        appId: 'AWX4QVM59R',
 
         // Public API key: it is safe to commit it
-        apiKey: "6095a25a6824bfa909fa0692e6847ec4",
+        apiKey: '861f327c200a8eab62a28ee1396f90de',
 
-        indexName: "mm--v2-staging",
+        indexName: 'mm--v2-staging',
 
         // Optional: see doc section below
         contextualSearch: true,
@@ -555,22 +604,23 @@ const config = {
 
         // Optional: Replace parts of the item URLs from Algolia. Useful when using the same search index for multiple deployments using a different baseUrl. You can use regexp or string in the `from` param. For example: localhost:3000 vs myCompany.com/docs
         replaceSearchResultPathname: {
-          from:  "/",
-          to: process.env.DEST || "/",
+          from: '/',
+          to: baseUrl,
         },
 
         // Optional: Algolia search parameters
         searchParameters: {},
 
         // Optional: path for search page that enabled by default (`false` to disable it)
-        searchPagePath: "search",
+        searchPagePath: 'search',
 
         //... other Algolia params
       },
       mermaid: {
         options: {
-          fontFamily: "arial, verdana, sans-serif;",
+          fontFamily: 'arial, verdana, sans-serif;',
           wrap: true,
+          securityLevel: 'loose',
           sequence: {
             diagramMarginX: 25,
             diagramMarginY: 25,
@@ -582,6 +632,6 @@ const config = {
         },
       },
     }),
-};
+}
 
-module.exports = config;
+module.exports = config

@@ -1,6 +1,5 @@
 ---
 description: See the MetaMask Ethereum provider API reference.
-sidebar_position: 3
 ---
 
 # Ethereum provider API
@@ -14,7 +13,7 @@ MetaMask supports [EIP-6963](https://eips.ethereum.org/EIPS/eip-6963), which int
 alternative wallet detection mechanism to the `window.ethereum` injected provider.
 This alternative mechanism enables dapps to support [wallet interoperability](../concepts/wallet-interoperability.md)
 by discovering multiple injected wallet providers in a user's browser.
-We recommend [using this mechanism to connect to MetaMask](../how-to/connect/index.md).
+We recommend [using this mechanism to connect to MetaMask](../how-to/connect-extension.md).
 
 You can access the provider API using the selected EIP-6963 provider object.
 Throughout this documentation, we refer to the selected provider using `provider`.
@@ -34,7 +33,7 @@ Non-MetaMask providers may also set this property to `true`.
 #### Example
 
 ```typescript
-provider.isMetaMask; // Or window.ethereum.isMetaMask if you don't support EIP-6963.
+provider.isMetaMask // Or window.ethereum.isMetaMask if you don't support EIP-6963.
 ```
 
 ## Methods
@@ -46,7 +45,7 @@ If the provider isn't connected, the page must be reloaded to re-establish the c
 See the [`connect`](#connect) and [`disconnect`](#disconnect) events for more information.
 
 :::note
-This method is unrelated to [accessing a user's accounts](../how-to/connect/access-accounts.md).
+This method is unrelated to [accessing a user's accounts](../how-to/access-accounts.md).
 In the provider interface, "connected" and "disconnected" refer to whether the provider can make RPC
 requests to the current chain.
 :::
@@ -62,12 +61,12 @@ None.
 #### Example
 
 ```typescript
-provider.isConnected(); // Or window.ethereum.isConnected() if you don't support EIP-6963.
+provider.isConnected() // Or window.ethereum.isConnected() if you don't support EIP-6963.
 ```
 
 ### `request()`
 
-This method is used to submit [JSON-RPC API requests](/wallet/reference/json-rpc-api) to Ethereum using MetaMask.
+This method is used to submit [JSON-RPC API requests](/wallet/reference/json-rpc-methods) to Ethereum using MetaMask.
 
 #### Parameters
 
@@ -85,27 +84,22 @@ If the request fails, the promise rejects with an [error](#errors).
 #### Example
 
 The following is an example of using `request()` to call
-[`eth_sendTransaction`](/wallet/reference/eth_sendTransaction):
+[`eth_sendTransaction`](/wallet/reference/json-rpc-methods/eth_sendtransaction):
 
 ```javascript
-params: [
-  {
-    from: "0xb60e8dd61c5d32be8058bb8eb970870f07233155",
-    to: "0xd46e8dd67c5d32be8058bb8eb970870f07244567",
-    // 30400
-    gas: "0x76c0",
-    // 10000000000000
-    gasPrice: "0x9184e72a000",
-    // 2441406250
-    value: "0x9184e72a",
-    data: "0xd46e8dd67c5d32be8d46e8dd67c5d32be8058bb8eb970870f072445675058bb8eb970870f072445675",
-  },
-];
-
 provider // Or window.ethereum if you don't support EIP-6963.
   .request({
     method: "eth_sendTransaction",
-    params,
+    params: [
+      {
+        from: "0xb60e8dd61c5d32be8058bb8eb970870f07233155",
+        to: "0xd46e8dd67c5d32be8058bb8eb970870f07244567",
+        gas: "0x76c0", // 30400
+        gasPrice: "0x9184e72a000", // 10000000000000
+        value: "0x9184e72a", // 2441406250
+        data: "0xd46e8dd67c5d32be8d46e8dd67c5d32be8058bb8eb970870f072445675058bb8eb970870f072445675",
+      },
+    ],
   })
   .then((result) => {
     // The result varies by RPC method.
@@ -113,7 +107,7 @@ provider // Or window.ethereum if you don't support EIP-6963.
   })
   .catch((error) => {
     // If the request fails, the Promise rejects with an error.
-  });
+  })
 ```
 
 ### `_metamask.isUnlocked()`
@@ -138,7 +132,7 @@ A promise that resolves to `true` if MetaMask is unlocked by the user, and `fals
 #### Example
 
 ```typescript
-provider._metamask.isUnlocked(); // Or window.ethereum._metamask.isUnlocked() if you don't support EIP-6963.
+provider._metamask.isUnlocked() // Or window.ethereum._metamask.isUnlocked() if you don't support EIP-6963.
 ```
 
 ## Events
@@ -156,12 +150,12 @@ function handleAccountsChanged(accounts) {
 }
 
 provider // Or window.ethereum if you don't support EIP-6963.
-  .on("accountsChanged", handleAccountsChanged);
+  .on("accountsChanged", handleAccountsChanged)
 
 // Later
 
 provider // Or window.ethereum if you don't support EIP-6963.
-  .removeListener("accountsChanged", handleAccountsChanged);
+  .removeListener("accountsChanged", handleAccountsChanged)
 ```
 
 ### `accountsChanged`
@@ -172,7 +166,7 @@ provider // Or window.ethereum if you don't support EIP-6963.
 ```
 
 The provider emits this event when the return value of the
-[`eth_accounts`](/wallet/reference/eth_accounts) RPC
+[`eth_accounts`](/wallet/reference/json-rpc-methods/eth_accounts) RPC
 method changes.
 `eth_accounts` returns either an empty array, or an array that contains the addresses of the accounts
 the caller is permitted to access with the most recently used account first.
@@ -180,7 +174,7 @@ Callers are identified by their URL origin, which means that all sites with the 
 the same permissions.
 
 This means that the provider emits `accountsChanged` when the user's exposed account address changes.
-Listen to this event to [handle accounts](../how-to/connect/access-accounts.md#handle-accounts).
+Listen to this event to [handle accounts](../how-to/access-accounts.md#handle-accounts).
 
 ### `chainChanged`
 
@@ -191,17 +185,6 @@ provider // Or window.ethereum if you don't support EIP-6963.
 
 The provider emits this event when the currently connected chain changes.
 Listen to this event to [detect a user's network](../how-to/manage-networks/detect-network.md).
-
-:::caution Important
-
-We strongly recommend reloading the page upon chain changes, unless you have a good reason not to:
-
-```typescript
-provider // Or window.ethereum if you don't support EIP-6963.
-  .on("chainChanged", (chainId) => window.location.reload());
-```
-
-:::
 
 ### `connect`
 
@@ -251,29 +234,29 @@ The `type` property identifies the kind of message.
 
 RPC subscription updates are a common use case for this event.
 For example, if you create a subscription using
-[`eth_subscribe`](/wallet/reference/eth_subscribe), each
+[`eth_subscribe`](/wallet/reference/json-rpc-methods/eth_subscribe), each
 subscription update is emitted as a `message` event with a `type` of `eth_subscription`.
 
 ### Remove event listeners
 
 #### `removeListener`
 
-Use the `removeListener` method to remove specific event listeners from an `EventEmitter` object. 
+Use the `removeListener` method to remove specific event listeners from an `EventEmitter` object.
 In the following example `removeListener` is used to remove the `connect` and `accountsChanged` events:
 
 ```javascript
 // Use window.ethereum instead of provider if EIP-6963 is not supported.
 
 // Add listeners
-provider.on("_initialized", updateWalletAndAccounts);
-provider.on("connect", updateWalletAndAccounts);
-provider.on("accountsChanged", updateWallet);
-provider.on("chainChanged", updateWalletAndAccounts);
-provider.on("disconnect", disconnectWallet);
+provider.on("_initialized", updateWalletAndAccounts)
+provider.on("connect", updateWalletAndAccounts)
+provider.on("accountsChanged", updateWallet)
+provider.on("chainChanged", updateWalletAndAccounts)
+provider.on("disconnect", disconnectWallet)
 
 // Remove individual listeners
-provider.removeListener("connect", updateWalletAndAccounts);
-provider.removeListener("accountsChanged", updateWallet);
+provider.removeListener("connect", updateWalletAndAccounts)
+provider.removeListener("accountsChanged", updateWallet)
 ```
 
 The first argument of `removeListener` is the event name, and the second argument is
@@ -281,12 +264,12 @@ a reference to the function passed to `on` for the event.
 
 #### `removeAllListeners`
 
-You can use `removeAllListeners` to remove all listeners from the event emitter at once. This method is helpful when you need to clean up all listeners simultaneously. 
+You can use `removeAllListeners` to remove all listeners from the event emitter at once. This method is helpful when you need to clean up all listeners simultaneously.
 
 :::caution
 
 Use `removeAllListeners` with caution.
-This method clears all event listeners associated with the emitter, not only the listeners set up by the application code. 
+This method clears all event listeners associated with the emitter, not only the listeners set up by the application code.
 Using this method can unexpectedly clear important event handlers, interfere with scripts, and make debugging more complex.
 You can use the `removeListener` method to safely remove specific listeners.
 
@@ -296,11 +279,11 @@ You can use the `removeListener` method to safely remove specific listeners.
 // Use window.ethereum instead of provider if EIP-6963 is not supported.
 
 // Add listeners
-provider.on("_initialized", updateWalletAndAccounts);
-provider.on("connect", updateWalletAndAccounts);
-provider.on("accountsChanged", updateWallet);
-provider.on("chainChanged", updateWalletAndAccounts);
-provider.on("disconnect", disconnectWallet);
+provider.on("_initialized", updateWalletAndAccounts)
+provider.on("connect", updateWalletAndAccounts)
+provider.on("accountsChanged", updateWallet)
+provider.on("chainChanged", updateWalletAndAccounts)
+provider.on("disconnect", disconnectWallet)
 
 // Remove all listeners
 provider.removeAllListeners()
@@ -314,9 +297,9 @@ All errors returned by the MetaMask provider follow this interface:
 
 ```typescript
 interface ProviderRpcError extends Error {
-  message: string;
-  code: number;
-  data?: unknown;
+  message: string
+  code: number
+  data?: unknown
 }
 ```
 

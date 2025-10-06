@@ -1,0 +1,31 @@
+:root[data-theme='dark'] {
+  --text-color: #fff;
+}
+
+:root[data-theme='light'] {
+  --text-color: #141618;
+}
+
+.h1 {
+  font-style: normal;
+  font-weight: 500;
+  color: var(--text-color);
+}
+
+.h2 {
+  font-style: normal;
+  font-weight: 500;
+  color: var(--text-color);
+}
+
+.h3 {
+  font-style: normal;
+  font-weight: 500;
+  color: var(--text-color);
+}
+
+.p {
+  font-style: normal;
+  font-weight: 400;
+  color: var(--text-color);
+}

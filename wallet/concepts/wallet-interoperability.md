@@ -1,6 +1,5 @@
 ---
-description: Learn about wallet interoperability.
-sidebar_position: 6
+description: Learn about wallet interoperability via EIP-6963.
 ---
 
 # Wallet interoperability
@@ -11,11 +10,11 @@ mechanism to the [`window.ethereum`](wallet-api.md#ethereum-provider-api) inject
 This mechanism is enabled by using the standardized interfaces defined by EIP-6963.
 
 :::info Why EIP-6963?
-[EIP-1193](https://eips.ethereum.org/EIPS/eip-1193) standardizes the interface for wallet providers, 
+[EIP-1193](https://eips.ethereum.org/EIPS/eip-1193) standardizes the interface for wallet providers,
 but it results in conflicts when users have multiple wallets installed, due to how the provider
-object is injected. 
-This can cause issues with wallet discovery, user onboarding, and connecting. 
-The wallet discovery mechanism introduced by EIP-6963 solves these issues. 
+object is injected.
+This can cause issues with wallet discovery, user onboarding, and connecting.
+The wallet discovery mechanism introduced by EIP-6963 solves these issues.
 :::
 
 The following is a demo of the user experience of detecting multiple wallets, showing the data
@@ -27,14 +26,14 @@ provided from each installed wallet:
   </video>
 </p>
 
-You can [connect to MetaMask using EIP-6963](../how-to/connect/index.md) and see the
+You can [connect to MetaMask using EIP-6963](../how-to/connect-extension.md) and see the
 [EIP-6963 Vite React + TypeScript demo](https://github.com/MetaMask/vite-react-ts-eip-6963/tree/main)
 for more information.
 
 ## EIP-6963 interfaces
 
 Wallets that support EIP-6963 implement and expose the following standardized interfaces.
-When [connecting to MetaMask using EIP-6963](../how-to/connect/index.md), it's important to review
+When [connecting to MetaMask using EIP-6963](../how-to/connect-extension.md), it's important to review
 and understand these interfaces.
 
 ### Provider info
@@ -62,8 +61,8 @@ interface announces an event dispatched by the wallet:
 
 ```typescript
 interface EIP6963AnnounceProviderEvent extends CustomEvent {
-  type: "eip6963:announceProvider";
-  detail: EIP6963ProviderDetail;
+  type: "eip6963:announceProvider"
+  detail: EIP6963ProviderDetail
 }
 ```
 
@@ -72,7 +71,7 @@ interface requests an event dispatched by a dapp:
 
 ```typescript
 interface EIP6963RequestProviderEvent extends Event {
-  type: "eip6963:requestProvider";
+  type: "eip6963:requestProvider"
 }
 ```
 
@@ -80,10 +79,12 @@ interface EIP6963RequestProviderEvent extends Event {
 
 The following third-party libraries support EIP-6963:
 
-- [Wagmi 2+](https://wagmi.sh)
-- [Web3Modal 3+](https://docs.walletconnect.com/web3modal/about)
+- [Wagmi 2+](/sdk/connect/javascript-wagmi)
+- [Reown AppKit](https://docs.reown.com/appkit/overview)
 - [MIPD Store](https://github.com/wevm/mipd)
-- [RainbowKit](https://www.rainbowkit.com/)
+- [RainbowKit](https://www.rainbowkit.com)
+- [Web3-Onboard](https://onboard.blocknative.com)
+- [ConnectKit](https://docs.family.co/connectkit)
 
 ### MIPD Store
 
@@ -98,12 +99,10 @@ supports TypeScript types.
 
 :::note
 MetaMask SDK does not support connecting to non-MetaMask wallets via EIP-6963.
-If you intend to support discovery of other wallets, we recommend using other methods of adding
-EIP-6963 support such as [Wagmi 2+](https://wagmi.sh).
+If you intend to support discovery of other wallets, we recommend using a third-party library such as [Wagmi](/sdk/connect/javascript-wagmi).
 :::
 
-The [MetaMask JavaScript SDK](../how-to/use-sdk/javascript/index.md) automatically checks
-for the presence of the MetaMask extension via EIP-6963.
+[MetaMask SDK](/sdk) automatically checks for the presence of the MetaMask extension via EIP-6963.
 This eliminates the need for manual configuration or detection methods, simplifying the initial
 setup process for both developers and users.
 
@@ -111,10 +110,9 @@ By adhering to the standards set by EIP-6963, the SDK unambiguously identifies a
 MetaMask, resolving potential conflicts that might arise with other wallet extensions, ensuring a
 more stable and reliable interaction for users.
 
-The SDK is also being integrated into [Wagmi 2+](https://wagmi.sh/), which supports EIP-6963.
-The SDK on its own supports connecting *only* to MetaMask via EIP-6963, so if you intend to support
-discovery of other wallets, we recommend using other methods of adding EIP-6963 support, such as
-Wagmi 2+.
+The SDK is also integrated into third-party libraries, like [Wagmi](/sdk/connect/javascript-wagmi), which support EIP-6963.
+The SDK on its own supports connecting _only_ to MetaMask via EIP-6963, so if you intend to support
+discovery of other wallets, we recommend using third-party libraries.
 
 ## Wallet support
 
@@ -125,6 +123,6 @@ See the [list of wallets that support EIP-6963](https://github.com/WalletConnect
 ## Backwards compatibility
 
 Dapps that do not support EIP-6963 can still
-[detect MetaMask using the `window.ethereum` provider](../how-to/connect/detect-metamask.md).
+[detect MetaMask using the `window.ethereum` provider](../tutorials/javascript-dapp-simple.md).
 However, we recommend adding support to improve the user experience for multiple installed wallets.
 Read more about [EIP-6963 backwards compatibility](https://eips.ethereum.org/EIPS/eip-6963#backwards-compatibility).

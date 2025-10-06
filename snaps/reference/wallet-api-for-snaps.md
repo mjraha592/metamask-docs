@@ -4,8 +4,8 @@ sidebar_position: 2
 toc_max_heading_level: 2
 ---
 
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
 
 # Wallet API for Snaps
 
@@ -14,7 +14,7 @@ Dapps can install and communicate with Snaps using a subset of the
 This page is a reference for those Snaps-specific methods.
 
 :::note
-See the [Wallet JSON-RPC API interactive reference](/wallet/reference/json-rpc-api) for the other
+See the [Wallet JSON-RPC API interactive reference](/wallet/reference/json-rpc-methods) for the other
 methods dapps can call.
 :::
 
@@ -40,9 +40,9 @@ An object mapping the IDs of permitted Snaps to their metadata:
 
 ```js
 await window.ethereum.request({
-  "method": "wallet_getSnaps",
-  "params": []
-});
+  method: "wallet_getSnaps",
+  params: [],
+})
 ```
 
 </TabItem>
@@ -91,7 +91,7 @@ The SemVer version ranges use the same semantics as npm `package.json` ranges.
 An object mapping the IDs of permitted Snaps to their metadata:
 
 - `id`: `string` - The ID of the Snap.
-- `initialPermissions`: `string` - The initial permissions of the Snap, which will be request when
+- `initialPermissions`: `string` - The initial permissions of the Snap, which will be requested when
   the Snap is installed.
 - `version`: `string` - The version of the Snap.
 - `enabled`: `boolean` - Indicates whether the Snap is enabled.
@@ -104,16 +104,14 @@ An object mapping the IDs of permitted Snaps to their metadata:
 
 ```js
 await window.ethereum.request({
-  "method": "wallet_requestSnaps",
-  "params": [
-    {
-      "npm:@metamask/example-snap": {},
-      "npm:fooSnap": {
-        "version": "^1.0.2"
-      }
-    }
-  ]
-});
+  method: "wallet_requestSnaps",
+  params: {
+    "npm:@metamask/example-snap": {},
+    "npm:foo-snap": {
+      version: "^1.0.2",
+    },
+  },
+})
 ```
 
 </TabItem>
@@ -127,9 +125,9 @@ await window.ethereum.request({
     "enabled": true,
     "blocked": false
   },
-  "npm:fooSnap": {
+  "npm:foo-snap": {
     "version": "1.0.5",
-    "id": "npm:fooSnap",
+    "id": "npm:foo-snap",
     "enabled": true,
     "blocked": false
   }
@@ -167,16 +165,14 @@ The result of the Snap method call.
 
 ```js
 await window.ethereum.request({
-  "method": "wallet_snap",
-  "params": [
-    {
-      "snapId": "npm:@metamask/example-snap",
-      "request": {
-        "method": "hello"
-      }
-    }
-  ]
-});
+  method: "wallet_snap",
+  params: {
+    snapId: "npm:@metamask/example-snap",
+    request: {
+      method: "hello",
+    },
+  },
+})
 ```
 
 </TabItem>
@@ -217,16 +213,14 @@ The result of the Snap method call.
 
 ```js
 await window.ethereum.request({
-  "method": "wallet_invokeSnap",
-  "params": [
-    {
-      "snapId": "npm:@metamask/example-snap",
-      "request": {
-        "method": "hello"
-      }
-    }
-  ]
-});
+  method: "wallet_invokeSnap",
+  params: {
+    snapId: "npm:@metamask/example-snap",
+    request: {
+      method: "hello",
+    },
+  },
+})
 ```
 
 </TabItem>

@@ -1,8 +1,6 @@
 ---
 sidebar_position: 2
 sidebar_label: Events
-tags:
-  - Keyring API
 ---
 
 # Account Management API events
@@ -19,7 +17,7 @@ MetaMask returns an error if the account already exists or the account object is
 
 ```typescript
 try {
-  emitSnapKeyringEvent(snap, KeyringEvent.AccountCreated, { account });
+  emitSnapKeyringEvent(snap, KeyringEvent.AccountCreated, { account })
   // Update your Snap's state.
 } catch (error) {
   // Handle the error.
@@ -39,7 +37,7 @@ MetaMask returns an error if one of the following is true:
 
 ```typescript
 try {
-  emitSnapKeyringEvent(snap, KeyringEvent.AccountUpdated, { account });
+  emitSnapKeyringEvent(snap, KeyringEvent.AccountUpdated, { account })
   // Update your Snap's state.
 } catch (error) {
   // Handle the error.
@@ -57,7 +55,7 @@ The delete event is idempotent, so it is safe to emit even if the account does n
 try {
   emitSnapKeyringEvent(snap, KeyringEvent.AccountDeleted, {
     id: account.id,
-  });
+  })
   // Update your Snap's state.
 } catch (error) {
   // Handle the error.
@@ -78,7 +76,7 @@ try {
   emitSnapKeyringEvent(snap, KeyringEvent.RequestApproved, {
     id: request.id,
     result,
-  });
+  })
   // Update your Snap's state.
 } catch (error) {
   // Handle the error.
@@ -98,7 +96,7 @@ This event only applies to Snaps that
 try {
   emitSnapKeyringEvent(snap, KeyringEvent.RequestRejected, {
     id: request.id,
-  });
+  })
   // Update your Snap's state.
 } catch (error) {
   // Handle the error.

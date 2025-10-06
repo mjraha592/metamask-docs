@@ -28,12 +28,14 @@ following to the manifest file:
 ```
 
 :::note
+
 All Snaps API methods except the following interactive UI methods require requesting permission in
 the manifest file:
 
 - [`snap_createInterface`](../reference/snaps-api.md#snap_createinterface)
 - [`snap_getInterfaceState`](../reference/snaps-api.md#snap_getinterfacestate)
-- [`snap_updateInterface`](../reference/snaps-api.md#snap_updateInterface)
+- [`snap_updateInterface`](../reference/snaps-api.md#snap_updateinterface)
+
 :::
 
 ### Endowments
@@ -57,8 +59,8 @@ permission, add the following to the manifest file:
 Dynamic permissions are not requested in the manifest file.
 Instead, your Snap can acquire dynamic permissions during its lifecycle.
 
-For example, request permission to call the [`eth_accounts`](/wallet/reference/eth_accounts)
-MetaMask JSON-RPC API method by calling [`eth_requestAccounts`](/wallet/reference/eth_requestaccounts).
+For example, request permission to call the [`eth_accounts`](/wallet/reference/json-rpc-methods/eth_accounts)
+MetaMask JSON-RPC API method by calling [`eth_requestAccounts`](/wallet/reference/json-rpc-methods/eth_requestaccounts).
 See the [`eth_accounts` dynamic permission](../reference/permissions.md#eth_accounts) for more information.
 
 ## Request permissions from a dapp
@@ -79,15 +81,15 @@ await window.ethereum.request({
     // Assuming the Snap is published to npm using the package name "hello-snap".
     "npm:hello-snap": {},
   },
-});
+})
 
 // Invoke the "hello" JSON-RPC method exposed by the Snap.
 const response = await window.ethereum.request({
   method: "wallet_invokeSnap",
   params: { snapId: "npm:hello-snap", request: { method: "hello" } },
-});
+})
 
-console.log(response); // "world!"
+console.log(response) // "world!"
 ```
 
 :::note
